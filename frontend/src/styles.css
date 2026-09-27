@@ -126,5 +126,9 @@ td input{width:96px;padding:5px 7px}
   display:flex;gap:10px;align-items:center}
 .login{max-width:360px;margin:12vh auto;padding:0 20px}
 svg.env{display:block;width:100%;height:auto}
+/* StatusBar: the current status and what it means, on one line. */
+.wf-now{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px}
+.wf-now .note{margin-left:0}
+
 .legend{display:flex;gap:16px;flex-wrap:wrap;padding:6px 14px 13px;font-size:11.5px;color:var(--slate)}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
