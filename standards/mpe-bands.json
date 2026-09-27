@@ -1,0 +1,87 @@
+{
+  "$schema_version": "1.0",
+  "standard_id": "OIML_R76-1_2006",
+  "source_clauses": {
+    "initial_verification": "3.5.1 / Table 6",
+    "in_service": "3.5.2 (see also 8.4.2)",
+    "influence_factors": "3.5.3.1",
+    "rounding_error_elimination": "3.5.3.2",
+    "net_values": "3.5.3.3",
+    "tare_weighing_device": "3.5.3.4",
+    "repeatability": "3.6.1"
+  },
+  "national_adoption": {
+    "jurisdiction": "IN",
+    "instrument": "Legal Metrology (General) Rules, 2011",
+    "clause": "Seventh Schedule, Heading A, Part II, para 3(6) / Table 20",
+    "equivalence": "IDENTICAL_VALUES",
+    "terminology_map": {
+      "initial_verification": "verification / re-verification",
+      "in_service": "inspection"
+    },
+    "deviations": [
+      "Class IIII is written 'IV'.",
+      "The Indian text states 'The maximum permissible errors during inspection shall be twice the maximum permissible errors allowed on verification', identical in effect to OIML 3.5.2."
+    ]
+  },
+  "load_unit": "e",
+  "load_variable": "m",
+  "load_definition": "m is the load expressed in verification scale intervals, i.e. m = L / e where L is the true test load.",
+  "in_service_multiplier": 2,
+  "mpe_is_symmetric": true,
+  "mpe_sign_note": "The absolute value of the mpe is 0.5 e, 1.0 e or 1.5 e; the tabulated value carries no sign (Table 6, Note 1).",
+  "bands": {
+    "I": [
+      { "mpe_e": 0.5, "lower": 0,      "lower_op": "ge", "upper": 50000,  "upper_op": "le" },
+      { "mpe_e": 1.0, "lower": 50000,  "lower_op": "gt", "upper": 200000, "upper_op": "le" },
+      { "mpe_e": 1.5, "lower": 200000, "lower_op": "gt", "upper": null,   "upper_op": null }
+    ],
+    "II": [
+      { "mpe_e": 0.5, "lower": 0,     "lower_op": "ge", "upper": 5000,   "upper_op": "le" },
+      { "mpe_e": 1.0, "lower": 5000,  "lower_op": "gt", "upper": 20000,  "upper_op": "le" },
+      { "mpe_e": 1.5, "lower": 20000, "lower_op": "gt", "upper": 100000, "upper_op": "le" }
+    ],
+    "III": [
+      { "mpe_e": 0.5, "lower": 0,    "lower_op": "ge", "upper": 500,   "upper_op": "le" },
+      { "mpe_e": 1.0, "lower": 500,  "lower_op": "gt", "upper": 2000,  "upper_op": "le" },
+      { "mpe_e": 1.5, "lower": 2000, "lower_op": "gt", "upper": 10000, "upper_op": "le" }
+    ],
+    "IIII": [
+      { "mpe_e": 0.5, "lower": 0,   "lower_op": "ge", "upper": 50,   "upper_op": "le" },
+      { "mpe_e": 1.0, "lower": 50,  "lower_op": "gt", "upper": 200,  "upper_op": "le" },
+      { "mpe_e": 1.5, "lower": 200, "lower_op": "gt", "upper": 1000, "upper_op": "le" }
+    ]
+  },
+  "derived_rules": {
+    "band_breakpoints_in_e": {
+      "I": [50000, 200000],
+      "II": [5000, 20000],
+      "III": [500, 2000],
+      "IIII": [50, 200]
+    },
+    "band_breakpoints_note": "Test loads should include the loads at which the mpe changes band (A.4.4.1). A load point generator must place points at, or immediately either side of, each breakpoint.",
+    "multi_interval_note": "For multi-interval instruments the mpe is determined from the verification scale interval ei of the partial range in which the load falls (3.3, worked example).",
+    "rounding_error_rule": "The rounding error included in any digital indication shall be eliminated if d > 0.2 e (3.5.3.2). This is what the changeover-point procedure of A.4.4.3 achieves.",
+    "net_value_rule": "The mpe applies to the net value for every possible tare load, except preset tare values (3.5.3.3).",
+    "tare_device_rule": "The mpe for a tare weighing device is the same, for any tare value, as that of the instrument for the same value of load (3.5.3.4).",
+    "repeatability_rule": "The difference between the results of several weighings of the same load shall not be greater than the absolute value of the mpe of the instrument for that load (3.6.1).",
+    "single_result_rule": "Regardless of what variation of results is permitted, the error of any single weighing result shall by itself not exceed the mpe for the given load (3.6)."
+  },
+  "error_computation": {
+    "source_clause": "A.4.4.3 (digital indication, changeover point method)",
+    "formulae": {
+      "P": "I + 0.5e - dL",
+      "E": "P - L",
+      "Ec": "E - E0"
+    },
+    "symbols": {
+      "I": "indication displayed by the instrument",
+      "dL": "sum of the additional small weights (each of e/10) added until the indication increases by one increment",
+      "L": "true value of the test load",
+      "P": "indication corrected for rounding error",
+      "E": "error",
+      "E0": "error determined at or near zero load",
+      "Ec": "error corrected for the zero error; Ec is the value compared against the mpe"
+    }
+  }
+}

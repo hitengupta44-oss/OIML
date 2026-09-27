@@ -1,0 +1,36 @@
+topic,oiml_r76_1_2006,in_general_rules_2011_7th_schedule_A,r76_2_section,notes
+Terminology,"T, 2","Part I, paras 1-7",,Indian Part I mirrors OIML Terminology and clauses 2-3
+Units of measurement,2.1,"Part II, para 2(1)",,"India: kg, mg, g, tonne; metric carat = 0.2 g symbol 'c'"
+Accuracy classes,3.1 / Table 3,"Part II, para 3(1) / Table 15",,"Class symbols: OIML IIII = India IV"
+Classification (e / n / Min),3.2 / Table 3,"Part II, para 3(3) / Table 17",,Values identical
+Verification scale interval form,3.2,"Part II, para 3(2) / Table 16","","e = 1/2/5 x 10^k"
+Multi-interval partial ranges,3.3 / Table 4,"Part II, para 3(4) / Table 18",,Thresholds identical (50000/5000/500/50)
+Auxiliary indicating devices,3.4 / Table 5,"Part II, para 3(5) / Table 19",,"d < e <= 10 d; classes I and II only"
+Maximum permissible errors,3.5.1 / Table 6,"Part II, para 3(6) / Table 20",,"India: 'verification/re-verification'; OIML 'initial verification'"
+MPE in service,3.5.2,"Part II, para 3(6)(ii)",,"India: 'inspection'; both are 2x"
+Elimination of rounding error,3.5.3.2,"Part II, para 3(6)(iii)",,d > 0.2 e
+MPE for net values,3.5.3.3,"Part II, para 3(6)(iii)(b)",,Applies to net value for every tare except preset tare
+Repeatability,3.6.1,"Part II, para 3(7)",5,Spread <= absolute mpe for that load
+Eccentricity,3.6.2 / A.4.7,"Part II, para 3(7)",3,
+Discrimination,3.8 / A.4.8,"Part II, para 3(8)",4,1.4 d for digital indication
+Influence quantities and time,3.9,"Part II, para 3(9)",,
+Tilting,3.9.1.1 / A.5.1,"Part II, para 3(9)",8,Classes II III IIII
+Temperature,3.9.2 / A.5.3,"Part II, para 3(9)",2,"Default range -10 C to +40 C"
+Voltage,3.9.3 / A.5.4,"Part II, para 3(9) / para 5",11,
+Creep and zero return,3.9.4 / A.4.11,"Part II, para 3(9)",6,
+Endurance,3.9.4.3 / A.6,"Part II, para 3(9)",15,Classes II III IIII with Max <= 100 kg
+Technical requirements self-indicating,4,"Part II, para 4",,
+Requirements for electronic instruments,5,"Part II, para 5 / Table 43-A",,Indian Annex-A carries the additional electronic tests
+Non-self-indicating instruments,6,"Part II, para 6",,
+Marking of instruments,7,"Part II, para 7",16,
+Metrological controls,8,"Part II, para 8",,
+Test procedures verification and inspection,"Annex A","Part II, para 9",,
+Additional tests for electronic instruments,"Annex B","Part II, Annex-A",12/13/14,
+Performance tests for influence factors,"A.5","Part II, Annex-A, para 2",,
+Power voltage variations,"A.5.4","Part II, Annex-A, para 3",11,
+Span stability,"B.4","Part II, Annex-A, para 4",14,
+Software-controlled instruments,"Annex G",,17,"WELMEC 7.2 supplies the risk-class framework"
+Model approval procedure,8.2,"Approval of Models Rules 2011, Rules 5-11",,"Indian procedural layer, not in R 76-1"
+Certificate of approval contents,,"Approval of Models Rules 2011, Rule 11(1)",,
+Mark of approval,,"Approval of Models Rules 2011, Rule 12",,"IND/{YY}/{LAB}/{MODEL}"
+Verification and stamping,8.3,"General Rules 2011 Rule 13; GATC Rules 2013",,"R 76-5 CD covers verification in the revision"

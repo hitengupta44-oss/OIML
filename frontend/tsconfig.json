@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@engine/*": ["../engine/*"],
+      "@standards/*": ["../standards/*"]
+    }
+  },
+  "include": ["src", "../engine/nawi-engine.ts"]
+}

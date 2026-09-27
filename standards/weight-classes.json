@@ -1,0 +1,52 @@
+{
+  "$schema_version": "1.0",
+  "standard_id": "OIML_R111-1_2004",
+  "title": "OIML R 111-1:2004 (E) Weights of classes E1, E2, F1, F2, M1, M1–2, M2, M2–3 and M3",
+  "amendment": "Amendment 2025 to R 111-1:2004 exists; it corrects 1.3.1 (traceability wording), 15.1.2 (reference to OIML B 18) and B.1.2. It does not change Table 1.",
+  "source_clause": "5.1.1 / Table 1",
+  "purpose": "Used by the application to validate the standard weights declared for a test: their class must be adequate for the instrument under test, and the combined uncertainty must be small enough for the mpe being verified.",
+  "mpe_unit": "mg",
+  "mpe_sign": "±",
+  "classes": ["E1", "E2", "F1", "F2", "M1", "M1-2", "M2", "M2-3", "M3"],
+  "nominal_note": "Table 1 specifies the smallest and largest weight permitted in each class. The maximum permissible errors and denominations shall not be extrapolated to higher or lower nominal values. A blank means that nominal value is not permitted in that class.",
+
+  "table": [
+    {"nominal": "5000 kg", "nominal_mg": 5000000000, "mpe": {"F1": 25000, "F2": 80000, "M1": 250000, "M1-2": 500000, "M2": 800000, "M2-3": 1600000, "M3": 2500000}},
+    {"nominal": "2000 kg", "nominal_mg": 2000000000, "mpe": {"F1": 10000, "F2": 30000, "M1": 100000, "M1-2": 200000, "M2": 300000, "M2-3": 600000, "M3": 1000000}},
+    {"nominal": "1000 kg", "nominal_mg": 1000000000, "mpe": {"E2": 1600, "F1": 5000, "F2": 16000, "M1": 50000, "M1-2": 100000, "M2": 160000, "M2-3": 300000, "M3": 500000}},
+    {"nominal": "500 kg",  "nominal_mg": 500000000,  "mpe": {"E2": 800, "F1": 2500, "F2": 8000, "M1": 25000, "M1-2": 50000, "M2": 80000, "M2-3": 160000, "M3": 250000}},
+    {"nominal": "200 kg",  "nominal_mg": 200000000,  "mpe": {"E2": 300, "F1": 1000, "F2": 3000, "M1": 10000, "M1-2": 20000, "M2": 30000, "M2-3": 60000, "M3": 100000}},
+    {"nominal": "100 kg",  "nominal_mg": 100000000,  "mpe": {"E2": 160, "F1": 500, "F2": 1600, "M1": 5000, "M1-2": 10000, "M2": 16000, "M2-3": 30000, "M3": 50000}},
+    {"nominal": "50 kg",   "nominal_mg": 50000000,   "mpe": {"E1": 25, "E2": 80, "F1": 250, "F2": 800, "M1": 2500, "M1-2": 5000, "M2": 8000, "M2-3": 16000, "M3": 25000}},
+    {"nominal": "20 kg",   "nominal_mg": 20000000,   "mpe": {"E1": 10, "E2": 30, "F1": 100, "F2": 300, "M1": 1000, "M2": 3000, "M3": 10000}},
+    {"nominal": "10 kg",   "nominal_mg": 10000000,   "mpe": {"E1": 5.0, "E2": 16, "F1": 50, "F2": 160, "M1": 500, "M2": 1600, "M3": 5000}},
+    {"nominal": "5 kg",    "nominal_mg": 5000000,    "mpe": {"E1": 2.5, "E2": 8.0, "F1": 25, "F2": 80, "M1": 250, "M2": 800, "M3": 2500}},
+    {"nominal": "2 kg",    "nominal_mg": 2000000,    "mpe": {"E1": 1.0, "E2": 3.0, "F1": 10, "F2": 30, "M1": 100, "M2": 300, "M3": 1000}},
+    {"nominal": "1 kg",    "nominal_mg": 1000000,    "mpe": {"E1": 0.5, "E2": 1.6, "F1": 5.0, "F2": 16, "M1": 50, "M2": 160, "M3": 500}},
+    {"nominal": "500 g",   "nominal_mg": 500000,     "mpe": {"E1": 0.25, "E2": 0.8, "F1": 2.5, "F2": 8.0, "M1": 25, "M2": 80, "M3": 250}},
+    {"nominal": "200 g",   "nominal_mg": 200000,     "mpe": {"E1": 0.10, "E2": 0.3, "F1": 1.0, "F2": 3.0, "M1": 10, "M2": 30, "M3": 100}},
+    {"nominal": "100 g",   "nominal_mg": 100000,     "mpe": {"E1": 0.05, "E2": 0.16, "F1": 0.5, "F2": 1.6, "M1": 5.0, "M2": 16, "M3": 50}},
+    {"nominal": "50 g",    "nominal_mg": 50000,      "mpe": {"E1": 0.03, "E2": 0.10, "F1": 0.3, "F2": 1.0, "M1": 3.0, "M2": 10, "M3": 30}},
+    {"nominal": "20 g",    "nominal_mg": 20000,      "mpe": {"E1": 0.025, "E2": 0.08, "F1": 0.25, "F2": 0.8, "M1": 2.5, "M2": 8.0, "M3": 25}},
+    {"nominal": "10 g",    "nominal_mg": 10000,      "mpe": {"E1": 0.020, "E2": 0.06, "F1": 0.20, "F2": 0.6, "M1": 2.0, "M2": 6.0, "M3": 20}},
+    {"nominal": "5 g",     "nominal_mg": 5000,       "mpe": {"E1": 0.016, "E2": 0.05, "F1": 0.16, "F2": 0.5, "M1": 1.6, "M2": 5.0, "M3": 16}},
+    {"nominal": "2 g",     "nominal_mg": 2000,       "mpe": {"E1": 0.012, "E2": 0.04, "F1": 0.12, "F2": 0.4, "M1": 1.2, "M2": 4.0, "M3": 12}},
+    {"nominal": "1 g",     "nominal_mg": 1000,       "mpe": {"E1": 0.010, "E2": 0.03, "F1": 0.10, "F2": 0.3, "M1": 1.0, "M2": 3.0, "M3": 10}},
+    {"nominal": "500 mg",  "nominal_mg": 500,        "mpe": {"E1": 0.008, "E2": 0.025, "F1": 0.08, "F2": 0.25, "M1": 0.8, "M2": 2.5}},
+    {"nominal": "200 mg",  "nominal_mg": 200,        "mpe": {"E1": 0.006, "E2": 0.020, "F1": 0.06, "F2": 0.20, "M1": 0.6, "M2": 2.0}},
+    {"nominal": "100 mg",  "nominal_mg": 100,        "mpe": {"E1": 0.005, "E2": 0.016, "F1": 0.05, "F2": 0.16, "M1": 0.5, "M2": 1.6}},
+    {"nominal": "50 mg",   "nominal_mg": 50,         "mpe": {"E1": 0.004, "E2": 0.012, "F1": 0.04, "F2": 0.12, "M1": 0.4}},
+    {"nominal": "20 mg",   "nominal_mg": 20,         "mpe": {"E1": 0.003, "E2": 0.010, "F1": 0.03, "F2": 0.10, "M1": 0.3}},
+    {"nominal": "10 mg",   "nominal_mg": 10,         "mpe": {"E1": 0.003, "E2": 0.008, "F1": 0.025, "F2": 0.08, "M1": 0.25}},
+    {"nominal": "5 mg",    "nominal_mg": 5,          "mpe": {"E1": 0.003, "E2": 0.006, "F1": 0.020, "F2": 0.06, "M1": 0.20}},
+    {"nominal": "2 mg",    "nominal_mg": 2,          "mpe": {"E1": 0.003, "E2": 0.006, "F1": 0.020, "F2": 0.06, "M1": 0.20}},
+    {"nominal": "1 mg",    "nominal_mg": 1,          "mpe": {"E1": 0.003, "E2": 0.006, "F1": 0.020, "F2": 0.06, "M1": 0.20}}
+  ],
+
+  "usage_rule": {
+    "clause": "Legal Metrology (General) Rules, 2011 — Seventh Schedule, Heading A, Part II",
+    "rule": "The maximum permissible error for the standard weights must not exceed one third of the maximum permissible error of the instrument for the applied load.",
+    "expression": "sum(mpe_weight_mg) / 1000 <= mpe_instrument_g / 3",
+    "note": "The Indian schedule additionally states that the error of the standard weight in air shall not exceed one quarter of its maximum permissible error in the application referred to there. Record which rule was applied."
+  }
+}

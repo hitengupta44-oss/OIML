@@ -1,0 +1,118 @@
+{
+  "$schema_version": "1.0",
+  "source_note": "Laboratories are the Regional Reference Standards Laboratories named in Annexure I of the Department of Consumer Affairs' revised procedure for model approvals. The model records are real Indian approvals published by the Department at consumeraffairs.nic.in/modelapprovalcertificate/. Approval-mark codes decode per Rule 12 of the Legal Metrology (Approval of Models) Rules, 2011 as IND / last two digits of the year of issue / laboratory code / model code.",
+  "is_synthetic": false,
+
+  "laboratories": [
+    {"code": "RRSL-AMD", "name": "RRSL Ahmedabad", "state": "Gujarat"},
+    {"code": "RRSL-BLR", "name": "RRSL Bengaluru", "state": "Karnataka"},
+    {"code": "RRSL-BBS", "name": "RRSL Bhubaneswar", "state": "Odisha"},
+    {"code": "RRSL-FBD", "name": "RRSL Faridabad", "state": "Haryana"},
+    {"code": "RRSL-GHY", "name": "RRSL Guwahati", "state": "Assam"},
+    {"code": "RRSL-JAI", "name": "RRSL Jaipur", "state": "Rajasthan"},
+    {"code": "RRSL-MUM", "name": "RRSL Mumbai", "state": "Maharashtra"},
+    {"code": "RRSL-VNS", "name": "RRSL Varanasi", "state": "Uttar Pradesh"}
+  ],
+
+  "instrument_types": [
+    {"code": "table_top", "label": "Table top", "typical_class": "III", "typical_max_kg": [5, 30]},
+    {"code": "platform", "label": "Platform", "typical_class": "III", "typical_max_kg": [60, 500]},
+    {"code": "weighbridge", "label": "Weighbridge", "typical_class": "III", "typical_max_kg": [30000, 100000]},
+    {"code": "counter", "label": "Counter machine", "typical_class": "III", "typical_max_kg": [10, 50]},
+    {"code": "crane", "label": "Crane scale", "typical_class": "IIII", "typical_max_kg": [1000, 20000]},
+    {"code": "balance", "label": "Laboratory balance", "typical_class": "II", "typical_max_kg": [0.2, 6]},
+    {"code": "price_computing", "label": "Price-computing retail scale", "typical_class": "III", "typical_max_kg": [6, 30]},
+    {"code": "hanging", "label": "Hanging / spring scale", "typical_class": "IIII", "typical_max_kg": [5, 100]}
+  ],
+
+  "approval_mark": {
+    "format": "IND/{YY}/{LAB_CODE}/{MODEL_CODE}",
+    "clause": "Legal Metrology (Approval of Models) Rules, 2011, Rule 12(1)",
+    "decode": {
+      "IND": "national identification letters",
+      "YY": "last two digits of the year of issue",
+      "LAB_CODE": "code number assigned to the laboratory",
+      "MODEL_CODE": "code number assigned to the model"
+    }
+  },
+
+  "approved_models_real": [
+    {"firm": "M/s Trix Electronics System (P) Ltd.", "city": "Alwar", "state": "Rajasthan",
+     "model": "'AT' series", "category": "Non-automatic weighing instrument (Table top type)",
+     "approval_mark": "IND/09/07/01", "date_of_issue": "2007-02-05"},
+    {"firm": "M/s Microtech Weighing Inc.", "city": "New Delhi", "state": "Delhi",
+     "model": "'MWB' series", "category": "Non-automatic weighing instrument (Weighbridge type)",
+     "approval_mark": "IND/09/07/09", "date_of_issue": "2007-02-05"},
+    {"firm": "M/s Perfect Weighing System", "city": "Chennai", "state": "Tamil Nadu",
+     "model": "PPF-65 D", "category": "Non-automatic weighing instrument (Platform type)",
+     "approval_mark": "IND/09/07/11", "date_of_issue": "2007-02-06"},
+    {"firm": "M/s National Corporation", "city": "Surat", "state": "Gujarat",
+     "model": "'INWB-30' series", "category": "Non-automatic weighing instrument (Weighbridge type)",
+     "approval_mark": "IND/09/07/15", "date_of_issue": "2007-02-02"}
+  ],
+
+  "known_answer_instruments": [
+    {
+      "id": "ishida_ms5060s",
+      "source": "NMI (Australia) Certificate of Approval No 6/4C/86 dated 8 July 1994",
+      "manufacturer": "Ishida Co. Ltd",
+      "address": "44 Sanno-cho, Shogoin, Sakyo-ku, Kyoto, Japan",
+      "model": "MS-5060S",
+      "description": "Self-indicating weighing instrument",
+      "max_capacity_g": 60000,
+      "e_g": 20,
+      "d_g": 20,
+      "accuracy_class": "III",
+      "expected": {"n": 3000, "min_capacity_g": 400,
+        "mpe_g": {"400": 10, "10000": 10, "10020": 20, "40000": 20, "60000": 30}},
+      "use": "Engine regression anchor. If the computed values differ from 'expected', the transcription of R 76-1 Tables 3 and 6 is wrong."
+    },
+    {
+      "id": "and_ap30",
+      "source": "NMI (Australia) Certificate of Approval No 6/4C/85, cancelled 2002",
+      "manufacturer": "A & D",
+      "model": "AP-30",
+      "description": "Multi-range self-indicating weighing instrument",
+      "note": "Useful as a multiple-range test case once multi-range support is implemented."
+    }
+  ],
+
+  "manufacturer_pool": [
+    "Avery India Ltd", "Essae-Teraoka Ltd", "Goldtech Industries", "Aczet Pvt Ltd",
+    "Contech Instruments Ltd", "Phoenix Weighing Systems", "Sansui Electronics",
+    "Metis Instruments", "Adair Dutt & Co", "Anamed Instruments",
+    "Trix Electronics System (P) Ltd", "Microtech Weighing Inc", "Perfect Weighing System",
+    "National Corporation", "Ishida Co. Ltd", "Mettler-Toledo India Pvt Ltd",
+    "Sartorius India Pvt Ltd", "Shimadzu Analytical India", "Wensar Weighing Scales",
+    "Atlas Weighing Systems", "Jayanti Scale Industries", "Kanta Weighing Pvt Ltd",
+    "Bharat Scale Works", "Unique Weighing Systems", "Digital Scale Corporation",
+    "Precision Weighing India", "Shreeji Weighbridge Co", "Sai Balaji Scales",
+    "Konark Instruments", "Vibra Weighing Technologies"
+  ],
+
+  "load_cell_pool": [
+    {"manufacturer": "Sentronik", "type": "SB-200", "capacity": "200 kg", "classification_symbol": "C3"},
+    {"manufacturer": "Zemic", "type": "H8C", "capacity": "500 kg", "classification_symbol": "C3"},
+    {"manufacturer": "Keli", "type": "QS-A", "capacity": "30 t", "classification_symbol": "C3"},
+    {"manufacturer": "Sensortronics", "type": "60001", "capacity": "50 kg", "classification_symbol": "C3"},
+    {"manufacturer": "HBM", "type": "PW15AH", "capacity": "15 kg", "classification_symbol": "C3"},
+    {"manufacturer": "Flintec", "type": "SB5", "capacity": "1 t", "classification_symbol": "C3"}
+  ],
+
+  "standard_weight_sets": [
+    {"set_id": "WS-F1-001", "class": "F1", "range": "1 mg to 1 kg", "lab": "RRSL-FBD"},
+    {"set_id": "WS-F2-014", "class": "F2", "range": "1 g to 20 kg", "lab": "RRSL-FBD"},
+    {"set_id": "WS-M1-022", "class": "M1", "range": "1 kg to 50 kg", "lab": "RRSL-MUM"},
+    {"set_id": "WS-M1-031", "class": "M1", "range": "100 kg to 1000 kg", "lab": "RRSL-MUM"},
+    {"set_id": "WS-M2-047", "class": "M2", "range": "500 kg to 5000 kg", "lab": "RRSL-BLR"},
+    {"set_id": "WS-E2-003", "class": "E2", "range": "1 mg to 200 g", "lab": "RRSL-BLR"}
+  ],
+
+  "roles_seed": [
+    {"role": "technician", "count_per_lab": 2},
+    {"role": "reviewer", "count_per_lab": 1},
+    {"role": "approver", "count_per_lab": 1},
+    {"role": "director", "count_total": 1},
+    {"role": "admin", "count_total": 1}
+  ]
+}

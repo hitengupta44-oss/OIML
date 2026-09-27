@@ -1,0 +1,279 @@
+{
+  "$schema_version": "1.0",
+  "standard_id": "OIML_R76-1_2006",
+  "supporting_document": "OIML D 11:2013 General requirements for measuring instruments — Environmental conditions",
+  "extraction_note": "Severities transcribed from OIML R 76-1:2006 Annex A.5 and Annex B. R 76-1 Annex B states that these tests were taken as far as possible from IEC work, taking into account the latest edition of OIML D 11. Where R 76-1 names a severity level, that value governs; D 11 supplies the general method and the IEC reference.",
+  "significant_fault": {
+    "definition_clause": "3.10.1 / B.3",
+    "limit_e": 1.0,
+    "rule": "The difference between the weight indication due to the disturbance and the indication without the disturbance shall either not exceed e, or the instrument shall detect and react to a significant fault."
+  },
+  "reference_conditions": {
+    "clause": "A.4.1",
+    "temperature": "Stable within the specified range; the change shall not exceed 1 °C/min during heating and cooling.",
+    "humidity_at_high_temp": "Relative humidity shall not exceed 20 g/m³ absolute during weighing tests at the specified high temperature.",
+    "humidity_note": "20 g/m³ corresponds to 39 % RH at 40 °C, 50 % at 35 °C and 66 % at 30 °C, at 1 013.25 hPa."
+  },
+  "influence_factors": [
+    {
+      "code": "static_temperature",
+      "title": "Static temperatures",
+      "clause": "A.5.3.1 (3.9.2.1, 3.9.2.2)",
+      "kind": "influence_factor",
+      "applies_to": "all",
+      "stages": [
+        {"label": "Reference", "temperature_c": 20,
+         "note": "For class I instruments, the mean value of the specified temperature limits."},
+        {"label": "Specified high temperature", "temperature_c": null, "from": "instrument.temp_high"},
+        {"label": "Specified low temperature", "temperature_c": null, "from": "instrument.temp_low"},
+        {"label": "5 °C", "temperature_c": 5, "condition": "only if the specified low temperature is <= 0 °C"},
+        {"label": "Return to reference", "temperature_c": 20}
+      ],
+      "default_range_c": {"low": -10, "high": 40,
+        "note": "Where the manufacturer does not specify a narrower range; see 3.9.2."},
+      "soak": "2 hours after the EUT has reached temperature stability, under free air conditions.",
+      "ramp_limit_c_per_min": 1,
+      "procedure": "Carry out the weighing test of A.4.4.1 (loading and unloading) at each stage.",
+      "tolerance": {"kind": "MPE", "compare": "Ec"},
+      "notes": ["For class I instruments, changes in barometric pressure shall be taken into account."]
+    },
+    {
+      "code": "temperature_no_load",
+      "title": "Temperature effect on the no-load indication",
+      "clause": "A.5.3.2 (3.9.2.3)",
+      "kind": "influence_factor",
+      "applies_to": "electronic",
+      "procedure": "Set the instrument to zero, change to the prescribed highest and lowest temperatures and 5 °C if applicable. After stabilisation determine the error of the zero indication. Calculate the change per 1 °C (class I) or per 5 °C (other classes) between any two consecutive temperatures.",
+      "tolerance": {"kind": "ABSOLUTE_E", "limit_e": 0.5,
+        "per_degrees": {"I": 1, "II": 5, "III": 5, "IIII": 5}},
+      "notes": ["Preloading is not allowed before these measurements.",
+                "Automatic zero-setting or zero-tracking shall not be in operation.",
+                "May be combined with A.5.3.1; errors at zero are then also determined immediately before each temperature change and after the 2 hour stabilisation period."]
+    },
+    {
+      "code": "damp_heat_steady",
+      "title": "Damp heat, steady state",
+      "clause": "B.2",
+      "kind": "influence_factor",
+      "applies_to": "electronic",
+      "not_applicable_to": "Class I instruments, and class II instruments where e < 1 g.",
+      "stages": [
+        {"label": "Reference after conditioning", "temperature": "20 °C or mean of range", "rh_percent": 50},
+        {"label": "High temperature", "temperature": "high limit of 3.9.2", "rh_percent": 85,
+         "hold": "two days following temperature and humidity stabilization"},
+        {"label": "Return to reference", "temperature": "20 °C or mean of range", "rh_percent": 50}
+      ],
+      "min_test_loads": 5,
+      "tolerance": {"kind": "MPE", "compare": "Ec",
+        "rule": "All functions shall operate as designed. All indications shall be within the mpe."},
+      "iec_reference": "R 76-1 references [8], [10]"
+    },
+    {
+      "code": "warm_up",
+      "title": "Warm-up time",
+      "clause": "A.5.2 (5.3.5)",
+      "kind": "influence_factor",
+      "applies_to": "electronic",
+      "pre_condition_hours_disconnected": 8,
+      "read_points_minutes": [0, 5, 15, 30],
+      "tolerance": {"kind": "MPE", "compare": "Ec"}
+    },
+    {
+      "code": "voltage_ac_mains",
+      "title": "AC mains voltage variation",
+      "clause": "A.5.4.1 (3.9.3)",
+      "kind": "influence_factor",
+      "applies_to": "mains_powered",
+      "severity": {"lower": "0.85 Unom or 0.85 Umin", "upper": "1.10 Unom or 1.10 Umax"},
+      "test_loads": ["10 e", "a load between ½ Max and Max"],
+      "tolerance": {"kind": "MPE", "compare": "Ec",
+        "rule": "All functions shall operate as designed. All indications shall be within the mpe."},
+      "notes": ["For a three-phase supply the variations apply to each phase successively."]
+    },
+    {
+      "code": "voltage_external_plugin",
+      "title": "External or plug-in power supply variation",
+      "clause": "A.5.4.2",
+      "kind": "influence_factor",
+      "applies_to": "external_supply",
+      "severity": {"lower": "minimum operating voltage (3.9.3)", "upper": "1.20 Unom or 1.20 Umax"},
+      "tolerance": {"kind": "MPE", "compare": "Ec",
+        "rule": "All functions operate as designed or the indication switches off. All indications within the mpe."}
+    },
+    {
+      "code": "voltage_battery_non_rechargeable",
+      "title": "Non-rechargeable battery supply variation",
+      "clause": "A.5.4.3",
+      "kind": "influence_factor",
+      "applies_to": "battery_powered",
+      "severity": {"lower": "minimum operating voltage (3.9.3)", "upper": "Unom or Umax"},
+      "tolerance": {"kind": "MPE", "compare": "Ec",
+        "rule": "All functions operate as designed or the indication switches off. All indications within the mpe."}
+    },
+    {
+      "code": "voltage_road_vehicle_battery",
+      "title": "12 V or 24 V road vehicle battery variation",
+      "clause": "A.5.4.4",
+      "kind": "influence_factor",
+      "applies_to": "vehicle_powered",
+      "severity": {"lower": "minimum operating voltage (3.9.3)",
+                   "upper_12v": "16 V",
+                   "upper_24v": "see A.5.4.4"},
+      "tolerance": {"kind": "MPE", "compare": "Ec"}
+    },
+    {
+      "code": "tilting",
+      "title": "Tilting",
+      "clause": "A.5.1 (3.9.1.1)",
+      "kind": "influence_factor",
+      "applies_to": "classes_II_III_IIII",
+      "tolerance": {"kind": "MPE", "compare": "Ec"}
+    },
+    {
+      "code": "span_stability",
+      "title": "Span stability",
+      "clause": "B.4",
+      "kind": "influence_factor",
+      "applies_to": "electronic",
+      "not_applicable_to": "Class I instruments.",
+      "duration_days": 28,
+      "min_measurements": 8,
+      "interval_rule": "Between ½ day and 10 days, fairly evenly distributed over the total duration.",
+      "power_disconnections": {"count": 2, "min_hours": 8},
+      "stabilisation_hours": {"normal": 5, "after_temperature_or_damp_heat": 16},
+      "test_load": "Near Max; the same test weights throughout.",
+      "must_include_tests": ["static_temperature", "damp_heat_steady"],
+      "must_exclude_tests": ["endurance"],
+      "tolerance": {"kind": "MPE", "compare": "Ec"}
+    }
+  ],
+  "disturbances": [
+    {
+      "code": "mains_dips_interruptions",
+      "title": "AC mains voltage dips and short interruptions",
+      "clause": "B.3.1",
+      "kind": "disturbance",
+      "applies_to": "mains_powered",
+      "repetitions": 10,
+      "interval_seconds_min": 10,
+      "test_load": "one small test load",
+      "severity_table": [
+        {"test": "a", "reduction_to_percent": 0,  "cycles": 0.5},
+        {"test": "b", "reduction_to_percent": 0,  "cycles": 1},
+        {"test": "c", "reduction_to_percent": 40, "cycles": 10},
+        {"test": "d", "reduction_to_percent": 70, "cycles": 25},
+        {"test": "e", "reduction_to_percent": 80, "cycles": 250},
+        {"test": "short interruption", "reduction_to_percent": 0, "cycles": 250}
+      ],
+      "tolerance": {"kind": "SIGNIFICANT_FAULT", "limit_e": 1.0},
+      "iec_reference": "R 76-1 reference [4]"
+    },
+    {
+      "code": "bursts",
+      "title": "Electrical fast transients / bursts",
+      "clause": "B.3.2",
+      "kind": "disturbance",
+      "applies_to": "electronic",
+      "severity_level": 2,
+      "amplitude_peak": {"power_supply_lines_kv": 1.0, "io_signal_data_control_lines_kv": 0.5},
+      "polarity": "both positive and negative",
+      "min_duration_per_amplitude_and_polarity_s": 60,
+      "applied_separately_to": ["power supply lines", "I/O circuits and communication lines, if any"],
+      "test_load": "one small test load",
+      "coupling": "Capacitive coupling clamp for I/O and communication lines; blocking filters on the mains injection network.",
+      "tolerance": {"kind": "SIGNIFICANT_FAULT", "limit_e": 1.0},
+      "iec_reference": "R 76-1 reference [14] (IEC 61000-4-4)"
+    },
+    {
+      "code": "surge",
+      "title": "Surge",
+      "clause": "B.3.3",
+      "kind": "disturbance",
+      "applies_to": "conditional",
+      "applicability_rule": "Only where the risk of significant influence of surges can be expected from typical installation: outdoor installations, or indoor installations connected to signal lines longer than 30 m or partially or fully installed outside buildings regardless of length. Also applicable to DC powered instruments supplied from DC mains.",
+      "severity_level": 2,
+      "amplitude_peak": {"line_to_line_kv": 0.5, "line_to_earth_kv": 1.0},
+      "applied_to": "power supply lines",
+      "ac_mains_rule": "At least 3 positive and 3 negative surges synchronously with the AC supply voltage at 0°, 90°, 180° and 270°.",
+      "other_supply_rule": "At least three positive and three negative surges.",
+      "test_load": "one small test load",
+      "tolerance": {"kind": "SIGNIFICANT_FAULT", "limit_e": 1.0},
+      "iec_reference": "R 76-1 reference [15] (IEC 61000-4-5)"
+    },
+    {
+      "code": "esd",
+      "title": "Electrostatic discharge",
+      "clause": "B.3.4",
+      "kind": "disturbance",
+      "applies_to": "electronic",
+      "severity_level": 3,
+      "voltage_kv": {"contact_discharge": 6, "air_discharge": 8},
+      "min_discharges": 10,
+      "interval_seconds_min": 10,
+      "application": {
+        "direct_contact": "Electrode in contact with the EUT, on conductive surfaces.",
+        "direct_air": "Electrode approached to the EUT until a spark occurs, on non-conductive surfaces.",
+        "indirect": "Contact mode to coupling planes mounted in the vicinity of the EUT."
+      },
+      "test_load": "one small test load",
+      "notes": ["Includes the paint penetration method if appropriate.",
+                "An EUT without a ground terminal shall be fully discharged between discharges."],
+      "tolerance": {"kind": "SIGNIFICANT_FAULT", "limit_e": 1.0},
+      "iec_reference": "R 76-1 reference [12] (IEC 61000-4-2)"
+    },
+    {
+      "code": "radiated_rf",
+      "title": "Immunity to radiated electromagnetic fields",
+      "clause": "B.3.5",
+      "kind": "disturbance",
+      "applies_to": "electronic",
+      "frequency_range_mhz": {"min": 80, "max": 2000},
+      "frequency_range_note": "For instruments having no mains or other I/O ports available so that B.3.6 cannot be applied, the lower limit of the radiation test is 26 MHz.",
+      "field_strength_v_per_m": 10,
+      "modulation": "80 % AM, 1 kHz, sine wave",
+      "test_load": "one small test load only",
+      "tolerance": {"kind": "SIGNIFICANT_FAULT", "limit_e": 1.0},
+      "iec_reference": "R 76-1 reference [13] (IEC 61000-4-3)"
+    },
+    {
+      "code": "conducted_rf",
+      "title": "Immunity to conducted radio-frequency fields",
+      "clause": "B.3.6",
+      "kind": "disturbance",
+      "applies_to": "electronic",
+      "frequency_range_mhz": {"min": 0.15, "max": 80},
+      "rf_amplitude_v_emf_50ohm": 10,
+      "modulation": "80 % AM, 1 kHz, sine wave",
+      "test_load": "one small test load only",
+      "tolerance": {"kind": "SIGNIFICANT_FAULT", "limit_e": 1.0},
+      "iec_reference": "R 76-1 reference [16] (IEC 61000-4-6)"
+    },
+    {
+      "code": "vehicle_transient_supply_line",
+      "title": "Electrical transient conduction along the supply line (12 V and 24 V vehicle supply)",
+      "clause": "B.3.7.1",
+      "kind": "disturbance",
+      "applies_to": "vehicle_powered",
+      "tolerance": {"kind": "SIGNIFICANT_FAULT", "limit_e": 1.0},
+      "note": "Severity pulses are specified in the referenced ISO standard; see B.3.7.1 of R 76-1."
+    },
+    {
+      "code": "vehicle_transient_coupling",
+      "title": "Electrical transient transmission by capacitive and inductive coupling via lines other than supply lines",
+      "clause": "B.3.7.2",
+      "kind": "disturbance",
+      "applies_to": "vehicle_powered",
+      "tolerance": {"kind": "SIGNIFICANT_FAULT", "limit_e": 1.0}
+    }
+  ],
+  "endurance": {
+    "code": "endurance",
+    "title": "Endurance",
+    "clause": "A.6 (3.9.4.3)",
+    "applies_to": "Classes II, III and IIII with Max <= 100 kg",
+    "cycles": 100000,
+    "load_fraction_of_max": 0.5,
+    "order": "Performed after all other tests.",
+    "tolerance": {"kind": "MPE", "compare": "Ec"}
+  }
+}

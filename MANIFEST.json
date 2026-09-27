@@ -1,0 +1,467 @@
+{
+ "bundle": "PS 26035 \u2014 NAWI type-evaluation test report system",
+ "status": "Stage 1 deployed \u00b7 Stage 2 deployed (Docker) \u00b7 Stage 3 pending",
+ "stages": {
+  "1_supabase": "supabase/ \u2014 database, auth, RLS",
+  "2_backend": "backend/ \u2014 Hugging Face Docker Space, FastAPI",
+  "3_frontend": "frontend/ \u2014 Vercel, Vite + React PWA"
+ },
+ "verified": {
+  "engine_tests": "31/31",
+  "sql_parser": "7 files ok",
+  "backend_render": "2 reports, DOCX + PDF",
+  "api_live": "health/verify/render tested against a running server",
+  "seed_sha256": "a4e30ba61b9251b1",
+  "postgres16": "seed x3 identical, verify 12/12, security 13/13"
+ },
+ "generated": "2026-09-27",
+ "files": [
+  {
+   "path": ".env.example",
+   "bytes": 353,
+   "sha256": "3f6b861b81946e63"
+  },
+  {
+   "path": ".gitignore",
+   "bytes": 478,
+   "sha256": "0e3033076f6c11ae"
+  },
+  {
+   "path": "DEPLOY.md",
+   "bytes": 3745,
+   "sha256": "9a911ff26ae7cdb8"
+  },
+  {
+   "path": "FILES.md",
+   "bytes": 8472,
+   "sha256": "d3409904b670af81"
+  },
+  {
+   "path": "README.md",
+   "bytes": 6056,
+   "sha256": "0485a15412ccba96"
+  },
+  {
+   "path": "seed/generate.py",
+   "bytes": 17111,
+   "sha256": "15cb70e6d6e7af4e"
+  },
+  {
+   "path": "seed/out/evaluations.json",
+   "bytes": 876059,
+   "sha256": "f7e5d37513aac87c"
+  },
+  {
+   "path": "seed/out/observations.csv",
+   "bytes": 325641,
+   "sha256": "be0a42f5481af20f"
+  },
+  {
+   "path": "supabase/README.md",
+   "bytes": 7360,
+   "sha256": "ca57afa98cc098c9"
+  },
+  {
+   "path": "supabase/RESET.sql",
+   "bytes": 1840,
+   "sha256": "e11dbfe9808380d5"
+  },
+  {
+   "path": "supabase/setup.sql",
+   "bytes": 41329,
+   "sha256": "9e40ef62c302dc50"
+  },
+  {
+   "path": "supabase/verify.sql",
+   "bytes": 8096,
+   "sha256": "ddab61b9b32e4aba"
+  },
+  {
+   "path": "supabase/seed/create_users.py",
+   "bytes": 4081,
+   "sha256": "e0140317f7cc2253"
+  },
+  {
+   "path": "supabase/seed/make_seed_sql.py",
+   "bytes": 10282,
+   "sha256": "1432003740201add"
+  },
+  {
+   "path": "supabase/seed/seed.sql",
+   "bytes": 751289,
+   "sha256": "fb02af359ebe79b7"
+  },
+  {
+   "path": "supabase/migrations/0001_schema.sql",
+   "bytes": 14943,
+   "sha256": "ddc5ab8b8d456a82"
+  },
+  {
+   "path": "supabase/migrations/0002_functions.sql",
+   "bytes": 14454,
+   "sha256": "9d2ec052dda163cf"
+  },
+  {
+   "path": "supabase/migrations/0003_rls.sql",
+   "bytes": 10653,
+   "sha256": "3b6967da5d874f98"
+  },
+  {
+   "path": "supabase/tests/rls_test.sql",
+   "bytes": 10169,
+   "sha256": "9b9508e84a19848b"
+  },
+  {
+   "path": "supabase/tests/security_test.sql",
+   "bytes": 9528,
+   "sha256": "e3d0ce02f19d2422"
+  },
+  {
+   "path": "frontend/.env.example",
+   "bytes": 255,
+   "sha256": "c597a8d42356dde2"
+  },
+  {
+   "path": "frontend/README.md",
+   "bytes": 3685,
+   "sha256": "184408838f6f22ff"
+  },
+  {
+   "path": "frontend/index.html",
+   "bytes": 680,
+   "sha256": "69449ef38a5cc2b2"
+  },
+  {
+   "path": "frontend/package.json",
+   "bytes": 693,
+   "sha256": "31fb6ae05c51ced8"
+  },
+  {
+   "path": "frontend/tsconfig.json",
+   "bytes": 518,
+   "sha256": "faab18ea80ef96e5"
+  },
+  {
+   "path": "frontend/vite.config.ts",
+   "bytes": 2207,
+   "sha256": "f1fa076a8bdca9fc"
+  },
+  {
+   "path": "frontend/src/App.tsx",
+   "bytes": 5297,
+   "sha256": "6b667163a05347f7"
+  },
+  {
+   "path": "frontend/src/main.tsx",
+   "bytes": 330,
+   "sha256": "d3c87bc30a7003b2"
+  },
+  {
+   "path": "frontend/src/styles.css",
+   "bytes": 7263,
+   "sha256": "55b5fa5d26facc5c"
+  },
+  {
+   "path": "frontend/src/lib/offline.ts",
+   "bytes": 4170,
+   "sha256": "c69f55d0226e495c"
+  },
+  {
+   "path": "frontend/src/lib/space.ts",
+   "bytes": 3371,
+   "sha256": "43a4a22148bbd55e"
+  },
+  {
+   "path": "frontend/src/lib/supabase.ts",
+   "bytes": 4754,
+   "sha256": "03c1103c8d5cf882"
+  },
+  {
+   "path": "frontend/src/routes/Dashboard.tsx",
+   "bytes": 3696,
+   "sha256": "fc224fd45d95b66a"
+  },
+  {
+   "path": "frontend/src/routes/Evaluate.tsx",
+   "bytes": 20753,
+   "sha256": "38303a383f50e4c9"
+  },
+  {
+   "path": "frontend/src/routes/Repository.tsx",
+   "bytes": 3418,
+   "sha256": "92f9270cdeed2f97"
+  },
+  {
+   "path": "frontend/public/README.txt",
+   "bytes": 142,
+   "sha256": "83500d8b6b1c6e90"
+  },
+  {
+   "path": "engine/nawi-engine.ts",
+   "bytes": 11805,
+   "sha256": "347ae0ea47c3d62d"
+  },
+  {
+   "path": "engine/nawi_engine.py",
+   "bytes": 14849,
+   "sha256": "6551871df025c59e"
+  },
+  {
+   "path": "engine/test_harness.py",
+   "bytes": 8395,
+   "sha256": "5605348aad09e3cb"
+  },
+  {
+   "path": "backend/.dockerignore",
+   "bytes": 59,
+   "sha256": "f981ec4d6f54b20c"
+  },
+  {
+   "path": "backend/.env.example",
+   "bytes": 247,
+   "sha256": "8073f9e37eebc1f6"
+  },
+  {
+   "path": "backend/Dockerfile",
+   "bytes": 1553,
+   "sha256": "b6651566b868378a"
+  },
+  {
+   "path": "backend/README.md",
+   "bytes": 6423,
+   "sha256": "6dadfec52f1ef12e"
+  },
+  {
+   "path": "backend/app.py",
+   "bytes": 9727,
+   "sha256": "99f3deb7f00d450d"
+  },
+  {
+   "path": "backend/auth.py",
+   "bytes": 3076,
+   "sha256": "7b3c2f570d5e93fe"
+  },
+  {
+   "path": "backend/build_template.py",
+   "bytes": 12132,
+   "sha256": "16faf17bebdf09ff"
+  },
+  {
+   "path": "backend/paths.py",
+   "bytes": 1600,
+   "sha256": "41ce64b959046dfd"
+  },
+  {
+   "path": "backend/recompute.py",
+   "bytes": 11213,
+   "sha256": "959027434382269e"
+  },
+  {
+   "path": "backend/render.py",
+   "bytes": 16585,
+   "sha256": "f1fa28e7b4fb2f1d"
+  },
+  {
+   "path": "backend/requirements.txt",
+   "bytes": 128,
+   "sha256": "588ee3e89dbb91ae"
+  },
+  {
+   "path": "backend/supabase_io.py",
+   "bytes": 7443,
+   "sha256": "ca7dcd5d5565a390"
+  },
+  {
+   "path": "backend/test_local.py",
+   "bytes": 4668,
+   "sha256": "f6f34650133035ac"
+  },
+  {
+   "path": "backend/templates/r76-2.docx",
+   "bytes": 39526,
+   "sha256": "d7ffc8d46e675305"
+  },
+  {
+   "path": "standards/accuracy-classes.json",
+   "bytes": 5029,
+   "sha256": "3f1318644259151d"
+  },
+  {
+   "path": "standards/clause-map.csv",
+   "bytes": 3012,
+   "sha256": "66e601e586b09c31"
+  },
+  {
+   "path": "standards/influence-tests.json",
+   "bytes": 13775,
+   "sha256": "bf3541f350d075f9"
+  },
+  {
+   "path": "standards/master-data.json",
+   "bytes": 6820,
+   "sha256": "beb20990832e662c"
+  },
+  {
+   "path": "standards/mpe-bands.json",
+   "bytes": 4606,
+   "sha256": "f94a191006324268"
+  },
+  {
+   "path": "standards/report-layout.json",
+   "bytes": 12070,
+   "sha256": "c9d6050d9c6301af"
+  },
+  {
+   "path": "standards/software-checklist.json",
+   "bytes": 8548,
+   "sha256": "063a580b668a2b86"
+  },
+  {
+   "path": "standards/test-catalogue.json",
+   "bytes": 24345,
+   "sha256": "55514abb5aca1ca1"
+  },
+  {
+   "path": "standards/weight-classes.json",
+   "bytes": 5904,
+   "sha256": "7f6e0c7a7b56839e"
+  },
+  {
+   "path": "standards/workflow.json",
+   "bytes": 10221,
+   "sha256": "533f8a59e77cdef9"
+  },
+  {
+   "path": "scripts/extract_all.sh",
+   "bytes": 1546,
+   "sha256": "6bfb9bfde419a0c9"
+  },
+  {
+   "path": "scripts/preflight.py",
+   "bytes": 8156,
+   "sha256": "ecbb2d7f8b72aa1f"
+  },
+  {
+   "path": "scripts/slice_indian_schedule.py",
+   "bytes": 837,
+   "sha256": "bd52ea2f205ff639"
+  },
+  {
+   "path": "scripts/smoke_test.py",
+   "bytes": 7393,
+   "sha256": "1181c52ddd9abded"
+  },
+  {
+   "path": "scripts/validate_sql.py",
+   "bytes": 1513,
+   "sha256": "0ff879a1cb964398"
+  },
+  {
+   "path": "docs/CALCULATION_METHODOLOGY.md",
+   "bytes": 8793,
+   "sha256": "886d72e295b04145"
+  },
+  {
+   "path": "docs/EXTRACTION_MANIFEST.md",
+   "bytes": 6896,
+   "sha256": "d1cc3fc9cb936d6f"
+  },
+  {
+   "path": "extracted/IN_7th_schedule_A_NAWI.txt",
+   "bytes": 629295,
+   "sha256": "d18fbd074bd8d3b3"
+  },
+  {
+   "path": "extracted/text/ASEAN-Guideline-for-NAWI.txt",
+   "bytes": 62899,
+   "sha256": "854c6cd3bfb1530c"
+  },
+  {
+   "path": "extracted/text/The_Legal_Metrology_General_Rules_2011.txt",
+   "bytes": 1357828,
+   "sha256": "861ad184d7fa2288"
+  },
+  {
+   "path": "extracted/text/WELMEC_Guide_7.2_version_v2022.txt",
+   "bytes": 393977,
+   "sha256": "1e3ae7f0adc0349c"
+  },
+  {
+   "path": "extracted/text/approval_of_models_rules_2011.txt",
+   "bytes": 31288,
+   "sha256": "165b0106bfeec57c"
+  },
+  {
+   "path": "extracted/text/d011-e13.txt",
+   "bytes": 281012,
+   "sha256": "6b47ef190e0ee2ec"
+  },
+  {
+   "path": "extracted/text/gatc_rules_2013_OCR.txt",
+   "bytes": 36039,
+   "sha256": "4b7a3a28c3edfeea"
+  },
+  {
+   "path": "extracted/text/lm_faq_OCR.txt",
+   "bytes": 30273,
+   "sha256": "008689d3e4931d4e"
+  },
+  {
+   "path": "extracted/text/national_standards_rules_2011_OCR.txt",
+   "bytes": 45976,
+   "sha256": "0827b3645de192ff"
+  },
+  {
+   "path": "extracted/text/nmi_r_76-2_2015_-_test_report_format.txt",
+   "bytes": 185382,
+   "sha256": "89bc63437b297389"
+  },
+  {
+   "path": "extracted/text/numeration_rules_2011_OCR.txt",
+   "bytes": 8763,
+   "sha256": "2cf0119fc9dd3ca3"
+  },
+  {
+   "path": "extracted/text/r076-1-e06.txt",
+   "bytes": 446286,
+   "sha256": "fd4c1cb9a532a45a"
+  },
+  {
+   "path": "extracted/text/r076-2-e07.txt",
+   "bytes": 183506,
+   "sha256": "e379d6f9ebf47395"
+  },
+  {
+   "path": "extracted/text/r111-1-e04.txt",
+   "bytes": 227213,
+   "sha256": "f18faa5b3a56d480"
+  },
+  {
+   "path": "extracted/text/r76_1_1_1_cd_requirements.txt",
+   "bytes": 378695,
+   "sha256": "6b6a785d8328f93a"
+  },
+  {
+   "path": "extracted/text/r76_2_1_1_cd_test_procedures.txt",
+   "bytes": 242600,
+   "sha256": "db78025e387369f5"
+  },
+  {
+   "path": "extracted/text/r76_3_1_1_cd_test_report_format.txt",
+   "bytes": 138026,
+   "sha256": "cfcde19e9264038c"
+  },
+  {
+   "path": "extracted/text/r76_4_1_1_cd_type_evaluation_report_format.txt",
+   "bytes": 109244,
+   "sha256": "9cfc7ed8b92a1ad0"
+  },
+  {
+   "path": "extracted/text/r76_5_1_1_cd_verification_and_in_service_inspection.txt",
+   "bytes": 37155,
+   "sha256": "999f0c4554733db9"
+  }
+ ],
+ "total_files": 89,
+ "total_bytes": 7287521
+}

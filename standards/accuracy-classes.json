@@ -1,0 +1,148 @@
+{
+  "$schema_version": "1.0",
+  "standard_id": "OIML_R76-1_2006",
+  "standard_title": "OIML R 76-1:2006 (E) Non-automatic weighing instruments - Part 1",
+  "source_clauses": {
+    "classification": "3.2 / Table 3",
+    "multi_interval_partial_range": "3.3.1",
+    "multi_interval_accuracy_class": "3.3.2",
+    "multi_interval_max_capacity": "3.3.3 / Table 4",
+    "min_capacity_with_auxiliary_device": "3.4.3",
+    "min_n_exception_class_I": "3.4.4"
+  },
+  "national_adoption": {
+    "jurisdiction": "IN",
+    "instrument": "Legal Metrology (General) Rules, 2011",
+    "clause": "Seventh Schedule, Heading A [See Rule 13], Part II, para 3(3) / Table 17",
+    "equivalence": "IDENTICAL_VALUES",
+    "deviations": [
+      "Ordinary accuracy class symbol is 'IV' in India, 'IIII' in OIML. Values are unchanged.",
+      "Multi-interval Maxi/ei+1 thresholds appear as Table 18 in the Indian schedule (identical to OIML Table 4)."
+    ]
+  },
+  "transcription_note": "Band values and comparison operators taken from the OIML R 76-1:2006 PDF text layer, NOT from the Indian Kanoon text rendering of the Seventh Schedule, whose operators are corrupted (it renders '5000 < m' as '5000 <= m', producing overlapping bands).",
+  "mass_unit_base": "g",
+  "classes": [
+    {
+      "code": "I",
+      "symbol_oiml": "I",
+      "symbol_in": "I",
+      "name": "Special accuracy",
+      "rows": [
+        {
+          "e_min_g": 0.001,
+          "e_max_g": null,
+          "e_min_op": "ge",
+          "e_max_op": null,
+          "n_min": 50000,
+          "n_max": null,
+          "min_capacity_multiplier": 100
+        }
+      ],
+      "notes": [
+        "e < 1 mg is not normally feasible to test and verify, due to the uncertainty of the test loads (Table 3 footnote *).",
+        "For an instrument of class I with d < 0.1 mg, n may be less than 50 000 (3.4.4)."
+      ],
+      "n_min_has_exception": true
+    },
+    {
+      "code": "II",
+      "symbol_oiml": "II",
+      "symbol_in": "II",
+      "name": "High accuracy",
+      "rows": [
+        {
+          "e_min_g": 0.001,
+          "e_max_g": 0.05,
+          "e_min_op": "ge",
+          "e_max_op": "le",
+          "n_min": 100,
+          "n_max": 100000,
+          "min_capacity_multiplier": 20
+        },
+        {
+          "e_min_g": 0.1,
+          "e_max_g": null,
+          "e_min_op": "ge",
+          "e_max_op": null,
+          "n_min": 5000,
+          "n_max": 100000,
+          "min_capacity_multiplier": 50
+        }
+      ],
+      "notes": [],
+      "n_min_has_exception": false
+    },
+    {
+      "code": "III",
+      "symbol_oiml": "III",
+      "symbol_in": "III",
+      "name": "Medium accuracy",
+      "rows": [
+        {
+          "e_min_g": 0.1,
+          "e_max_g": 2,
+          "e_min_op": "ge",
+          "e_max_op": "le",
+          "n_min": 100,
+          "n_max": 10000,
+          "min_capacity_multiplier": 20
+        },
+        {
+          "e_min_g": 5,
+          "e_max_g": null,
+          "e_min_op": "ge",
+          "e_max_op": null,
+          "n_min": 500,
+          "n_max": 10000,
+          "min_capacity_multiplier": 20
+        }
+      ],
+      "notes": [],
+      "n_min_has_exception": false
+    },
+    {
+      "code": "IIII",
+      "symbol_oiml": "IIII",
+      "symbol_in": "IV",
+      "name": "Ordinary accuracy",
+      "rows": [
+        {
+          "e_min_g": 5,
+          "e_max_g": null,
+          "e_min_op": "ge",
+          "e_max_op": null,
+          "n_min": 100,
+          "n_max": 1000,
+          "min_capacity_multiplier": 10
+        }
+      ],
+      "notes": [],
+      "n_min_has_exception": false
+    }
+  ],
+  "min_capacity_rules": {
+    "grading_instruments_multiplier": 5,
+    "grading_instruments_note": "Min is reduced to 5 e for grading instruments, i.e. instruments that determine a transport tariff or toll (e.g. postal scales, instruments weighing waste material). Table 3, following text.",
+    "auxiliary_indicating_device_note": "Where the instrument has an auxiliary indicating device, the multiplier in the Min column applies to the actual scale interval d instead of e (3.4.3)."
+  },
+  "multi_interval": {
+    "source": "3.3.3 / Table 4",
+    "rule": "With the exception of the last partial weighing range, Maxi / e(i+1) shall be >= the threshold for the class.",
+    "thresholds": {
+      "I": 50000,
+      "II": 5000,
+      "III": 500,
+      "IIII": 50
+    }
+  },
+  "scale_interval_form": {
+    "rule": "e shall be of the form 1 x 10^k, 2 x 10^k or 5 x 10^k, k being a positive or negative whole number or zero.",
+    "permitted_mantissas": [1, 2, 5]
+  },
+  "multiple_range_notes": [
+    "On multiple range instruments the verification scale intervals are e1 < e2 < ... < er; Min, n and Max are subscripted accordingly.",
+    "On multiple range instruments, each range is treated as if it were an instrument with one range.",
+    "For special applications clearly marked on the instrument, ranges may be in classes I and II, or II and III; the instrument as a whole shall comply with the more severe requirements of 3.9."
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "$schema_version": "1.0",
+  "format_id": "OIML_R76-2_2007",
+  "title": "OIML R 76-2:2007 (E) Non-automatic weighing instruments — Part 2: Test report format",
+  "developed_by": "OIML TC 9/SC 1; approved for final publication by CIML in 2007; supersedes R 76-2 (1993).",
+  "purpose": "Presents, in a standardized format, the results of the tests to which a type of non-automatic weighing instrument is submitted with a view to its approval. The tests are described in Annexes A and B of R 76-1.",
+  "template_file": "templates/r76-2.docx",
+  "page_footer": "Report page {page}/{total}",
+  "successor_note": "The ongoing R 76 revision splits this into R 76-3 (test report format) and R 76-4 (type evaluation report format). Draft layouts are held in extracted/text/r76_3_1_1_cd_test_report_format.txt and r76_4_1_1_cd_type_evaluation_report_format.txt.",
+
+  "front_matter": [
+    {
+      "id": "general_information",
+      "title": "General information concerning the type",
+      "bookmark": "GEN_INFO",
+      "fields": [
+        {"key": "applicant", "label": "Applicant", "type": "text"},
+        {"key": "instrument_category", "label": "Instrument category", "type": "text"},
+        {"key": "scope", "label": "Scope", "type": "enum",
+         "options": ["Complete instrument", "Module"],
+         "module_extra": {"key": "error_fraction_pi", "label": "Error fraction pᵢ", "type": "number"}},
+        {"key": "accuracy_class", "label": "Accuracy class", "type": "enum", "options": ["I", "II", "III", "IIII"],
+         "national_note": "Printed as IV for reports issued under the Indian Legal Metrology rules."},
+        {"key": "indication_type", "label": "Indication", "type": "enum",
+         "options": ["Self-indicating", "Semi-self-indicating", "Non-self-indicating"]},
+        {"key": "min_capacity", "label": "Min", "type": "mass"},
+        {"key": "ranges", "label": "Weighing ranges", "type": "table",
+         "columns": ["e", "Max", "d", "n"], "rows": 4,
+         "note": "Row 1 is the single-range case; rows 2 to 4 carry e1/Max1/d1/n1 through e3/Max3/d3/n3 for multiple range or multi-interval instruments."},
+        {"key": "tare_range_pos", "label": "T = +", "type": "mass"},
+        {"key": "tare_range_neg", "label": "T = −", "type": "mass"},
+        {"key": "u_nom", "label": "Unom", "type": "number", "unit": "V"},
+        {"key": "u_min", "label": "Umin", "type": "number", "unit": "V"},
+        {"key": "u_max", "label": "Umax", "type": "number", "unit": "V"},
+        {"key": "frequency", "label": "f", "type": "number", "unit": "Hz"},
+        {"key": "battery_u_nom", "label": "Battery, Unom", "type": "number", "unit": "V"},
+        {"key": "zero_setting_device", "label": "Zero-setting device", "type": "multi",
+         "options": ["Non-automatic", "Semi-automatic", "Automatic zero-setting", "Initial zero-setting", "Zero-tracking"]},
+        {"key": "tare_device", "label": "Tare device", "type": "multi",
+         "options": ["Tare balancing", "Tare weighing", "Preset tare device", "Subtractive tare", "Additive tare", "Combined zero/tare device"]},
+        {"key": "initial_zero_range_pct", "label": "Initial zero-setting range", "type": "number", "unit": "% of Max"},
+        {"key": "temperature_range_c", "label": "Temperature range", "type": "range", "unit": "°C"},
+        {"key": "printer", "label": "Printer", "type": "enum",
+         "options": ["Built-in", "Connected", "Not present", "No connection but connectable"]},
+        {"key": "instrument_submitted", "label": "Instrument submitted", "type": "text"},
+        {"key": "identification_no", "label": "Identification no.", "type": "text"},
+        {"key": "software_version", "label": "Software version", "type": "text"},
+        {"key": "connected_equipment", "label": "Connected equipment", "type": "textarea"},
+        {"key": "interfaces", "label": "Interfaces (number, nature)", "type": "textarea"},
+        {"key": "evaluation_period", "label": "Evaluation period", "type": "daterange"},
+        {"key": "report_date", "label": "Date of report", "type": "date"},
+        {"key": "observer", "label": "Observer", "type": "text"},
+        {"key": "load_cell", "label": "Load cell", "type": "group", "subfields": [
+          {"key": "manufacturer", "label": "Manufacturer"},
+          {"key": "type", "label": "Type"},
+          {"key": "capacity", "label": "Capacity"},
+          {"key": "number", "label": "Number"},
+          {"key": "classification_symbol", "label": "Classification symbol"},
+          {"key": "remarks", "label": "Remarks"}
+        ]}
+      ]
+    },
+    {
+      "id": "general_information_continued",
+      "title": "General information concerning the type (continued)",
+      "bookmark": "GEN_INFO_CONT",
+      "fields": [
+        {"key": "additional_remarks", "label": "Additional remarks and information", "type": "textarea",
+         "help": "Connection equipment, interfaces and load cells, choice of the manufacturer regarding protection against disturbances (5.1.1 a or 5.1.1 b of R 76-1), etc."}
+      ]
+    },
+    {
+      "id": "test_equipment",
+      "title": "Information concerning the test equipment used for type evaluation",
+      "bookmark": "TEST_EQUIPMENT",
+      "fields": [
+        {"key": "equipment", "label": "Test equipment", "type": "table",
+         "columns": ["Description", "Manufacturer / model", "Identification", "Class or accuracy", "Calibration certificate", "Valid until"]},
+        {"key": "standard_weights", "label": "Standard weights used", "type": "table",
+         "columns": ["Nominal value", "OIML R 111 class", "Set identification", "Certificate", "Valid until"],
+         "validation_ref": "weight-classes.json"}
+      ]
+    },
+    {
+      "id": "summary",
+      "title": "Summary of type evaluation",
+      "bookmark": "SUMMARY",
+      "fields": [
+        {"key": "application_no", "label": "Application no.", "type": "text"},
+        {"key": "type_designation", "label": "Type designation", "type": "text"},
+        {"key": "summary_table", "label": "Tests", "type": "table",
+         "columns": ["Tests", "Report page", "PASSED", "FAILED", "Remarks"],
+         "rows_from": "test-catalogue.json:tests",
+         "note": "One row per numbered test section; PASSED and FAILED are checkboxes."}
+      ]
+    }
+  ],
+
+  "sections": [
+    {"no": 1,  "title": "Weighing performance", "bookmark": "S01_WEIGHING", "test_code": "weighing_performance",
+     "columns": ["Load L", "Indication I", "ΔL", "P = I + ½e − ΔL", "Error E", "Corrected error Ec", "mpe", "Verdict"],
+     "extra_fields": [{"key": "temperature_c", "label": "Temperature", "unit": "°C"},
+                      {"key": "stage", "label": "Stage", "default": "Initial"}]},
+    {"no": 2,  "title": "Temperature effect on no-load indication", "bookmark": "S02_TEMP_NOLOAD", "test_code": "temperature_no_load",
+     "columns": ["Temperature", "Zero indication", "Error at zero", "Change per interval", "Limit", "Verdict"]},
+    {"no": 3,  "title": "Eccentricity", "bookmark": "S03_ECCENTRICITY", "test_code": "eccentricity",
+     "columns": ["Position", "Load L", "Indication I", "ΔL", "Corrected error Ec", "mpe", "Verdict"]},
+    {"no": 4,  "title": "Discrimination and sensitivity", "bookmark": "S04_DISCRIMINATION",
+     "test_codes": ["discrimination", "sensitivity"],
+     "columns": ["Load", "Initial indication", "Extra load", "Resulting indication", "Expected", "Verdict"]},
+    {"no": 5,  "title": "Repeatability", "bookmark": "S05_REPEATABILITY", "test_code": "repeatability",
+     "columns": ["Series", "Load", "Weighing no.", "Indication", "Spread", "Limit", "Verdict"]},
+    {"no": 6,  "title": "Time-dependence", "bookmark": "S06_TIME_DEPENDENCE", "test_code": "time_dependence",
+     "columns": ["Elapsed time", "Indication", "Deviation", "Limit", "Verdict"],
+     "subsections": ["Creep", "Zero return"]},
+    {"no": 7,  "title": "Stability of equilibrium", "bookmark": "S07_STABILITY", "test_code": "stability_of_equilibrium",
+     "columns": ["Check", "Observation", "Verdict"]},
+    {"no": 8,  "title": "Tilting", "bookmark": "S08_TILTING", "test_code": "tilting",
+     "columns": ["Direction", "Tilt", "Load", "Indication", "Corrected error Ec", "mpe", "Verdict"]},
+    {"no": 9,  "title": "Tare (weighing test)", "bookmark": "S09_TARE", "test_code": "tare",
+     "columns": ["Tare T", "Net load", "Indication", "ΔL", "Corrected error Ec", "mpe", "Verdict"]},
+    {"no": 10, "title": "Warm-up time", "bookmark": "S10_WARMUP", "test_code": "warm_up",
+     "columns": ["Minutes after switch-on", "Error at zero", "Indication near Max", "Corrected error Ec", "mpe", "Verdict"]},
+    {"no": 11, "title": "Voltage variations", "bookmark": "S11_VOLTAGE", "test_code": "voltage_variations",
+     "columns": ["Supply", "Voltage", "Load", "Indication", "Corrected error Ec", "mpe", "Verdict"]},
+    {"no": 12, "title": "Electrical disturbances", "bookmark": "S12_DISTURBANCES", "test_code": "electrical_disturbances",
+     "columns": ["Disturbance", "Severity", "Indication without disturbance", "Indication with disturbance", "Difference", "Limit (1 e) or significant fault detected", "Verdict"],
+     "subsections_from": "influence-tests.json:disturbances",
+     "note": "R 76-2 devotes pages 24 to 36 to this section; each disturbance has its own sheet with a table of observations numbered 'Without disturbance' / 'With disturbance'."},
+    {"no": 13, "title": "Damp heat, steady state", "bookmark": "S13_DAMP_HEAT", "test_code": "damp_heat",
+     "columns": ["Stage", "Temperature", "RH", "Load", "Indication", "Corrected error Ec", "mpe", "Verdict"]},
+    {"no": 14, "title": "Span stability", "bookmark": "S14_SPAN_STABILITY", "test_code": "span_stability",
+     "columns": ["Measurement no.", "Date", "Temperature", "RH", "Load", "Indication", "Corrected error Ec", "Variation", "mpe", "Verdict"]},
+    {"no": 15, "title": "Endurance", "bookmark": "S15_ENDURANCE", "test_code": "endurance",
+     "columns": ["Stage", "Load", "Indication", "Intrinsic error", "Durability error", "mpe", "Verdict"],
+     "subsections": ["Before endurance loading", "After 100 000 cycles"]},
+    {"no": 16, "title": "Examination of the construction of the instrument", "bookmark": "S16_CONSTRUCTION", "test_code": "construction_examination",
+     "columns": ["Item", "Clause", "Observation", "Verdict"]},
+    {"no": 17, "title": "Checklist", "bookmark": "S17_CHECKLIST", "test_code": "checklist",
+     "columns": ["Clause", "Requirement", "Complies", "Does not comply", "Not applicable", "Remarks"],
+     "items_from": "software-checklist.json"}
+  ],
+
+  "back_matter": [
+    {"id": "conclusion", "title": "Conclusion", "bookmark": "CONCLUSION",
+     "fields": [
+       {"key": "overall_verdict", "label": "Overall verdict", "type": "enum", "options": ["Conforms", "Does not conform", "Provisional"]},
+       {"key": "conditions", "label": "Special conditions", "type": "textarea"},
+       {"key": "seal_locations", "label": "Places where the verification seal or stamp may be affixed", "type": "textarea",
+        "clause_in": "Approval of Models Rules 2011, Rule 11(1)(g)"}
+     ]},
+    {"id": "signatures", "title": "Signatures", "bookmark": "SIGNATURES",
+     "fields": [
+       {"key": "tested_by", "label": "Tested by", "role": "technician"},
+       {"key": "verified_by", "label": "Verified by", "role": "reviewer"},
+       {"key": "approved_by", "label": "Approved by", "role": "approver"},
+       {"key": "signed_at", "label": "Date", "type": "date"}
+     ],
+     "digital_signature": {"optional": true, "standard": "PAdES", "note": "DSC token or eSign API."}},
+    {"id": "annex_photos", "title": "Annex — photographs and supporting documents", "bookmark": "ANNEX_PHOTOS",
+     "items_from": "workflow.json:required_attachments"}
+  ],
+
+  "render_pipeline": {
+    "engine": "docxtpl (Jinja2 over python-docx)",
+    "pdf": "LibreOffice headless --convert-to pdf",
+    "note": "One DOCX template produces both required formats, and the template can be edited by the laboratory without touching application code."
+  }
+}

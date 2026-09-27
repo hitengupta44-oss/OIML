@@ -1,0 +1,120 @@
+{
+  "$schema_version": "1.0",
+  "sources": [
+    {"id": "OIML_R76-1_2006_AnnexG", "title": "OIML R 76-1:2006 Annex G — Additional examinations and tests for software-controlled instruments"},
+    {"id": "WELMEC_7.2_2022", "title": "WELMEC Guide 7.2:2022 Software Guide (EU Measuring Instruments Directive 2014/32/EU)"},
+    {"id": "OIML_D31_2008", "title": "OIML D 31:2008 General requirements for software controlled measuring instruments", "held": false}
+  ],
+  "extraction_note": "WELMEC 7.2 defines six risk classes A to F with increasing risk assumptions; risk classes B to D cover all instrument classes falling under the MID. Each measuring instrument is assigned to a risk class because the applicable software requirements are governed by it. Requirements are organised as a basic type (P for a built-for-purpose measuring instrument, U for an instrument using a universal computer) plus extensions selected by the instrument's features.",
+
+  "risk_classes": {
+    "clause": "WELMEC 7.2 §2, Derivation of risk classes",
+    "range": ["A", "B", "C", "D", "E", "F"],
+    "note": "Risk classes B to D cover all instrument classes regulated by the MID. Class A is the lowest and E/F the highest.",
+    "nawi_typical": "C",
+    "nawi_note": "The applicable class for a non-automatic weighing instrument is taken from the instrument-specific extension; record the class determined for this model and the justification."
+  },
+
+  "basic_types": {
+    "P": {
+      "label": "Type P — built-for-purpose measuring instrument",
+      "description": "An instrument with an embedded, dedicated computing environment."
+    },
+    "U": {
+      "label": "Type U — instrument using a universal computer",
+      "description": "An instrument whose legally relevant software runs on a general-purpose computer. Requirements are generally more demanding because the environment is more exposed."
+    }
+  },
+
+  "extensions": {
+    "L": "Long-term storage of measurement data",
+    "T": "Transmission of measurement data via communication networks",
+    "S": "Software separation (legally relevant software separated from other parts)",
+    "D": "Download of legally relevant software",
+    "I": "Instrument-specific extension, which also fixes the applicable risk class"
+  },
+
+  "requirements": {
+    "P": [
+      {"id": "P1", "title": "Manufacturer's documentation", "mid_ref": "AI-9.3, AI-12, Article 18"},
+      {"id": "P2", "title": "Software identification", "mid_ref": "AI-7.6, AI-8.3"},
+      {"id": "P3", "title": "Influence via user interface", "mid_ref": "AI-7.1"},
+      {"id": "P4", "title": "Influence via communication interface", "mid_ref": "AI-7.1, AI-8.1"},
+      {"id": "P5", "title": "Protection against accidental or unintentional changes", "mid_ref": "AI-7.1, AI-7.2, AI-8.4"},
+      {"id": "P6", "title": "Protection against intentional changes", "mid_ref": "AI-7.1, AI-8.2, AI-8.3, AI-8.4"},
+      {"id": "P7", "title": "Parameter protection", "mid_ref": "AI-7.1, AI-8.2, AI-8.3, AI-8.4"},
+      {"id": "P8", "title": "Software authenticity and presentation of results", "mid_ref": "AI-7.1, AI-7.2, AI-7.6, AI-8.3, AI-10.2, AI-10.3, AI-10.4"}
+    ],
+    "U": [
+      {"id": "U1", "title": "Manufacturer's documentation", "mid_ref": "AI-9.3, AI-12, Article 18"},
+      {"id": "U2", "title": "Software identification", "mid_ref": "AI-7.6, AI-8.3"},
+      {"id": "U3", "title": "Influence via user interface", "mid_ref": "AI-7.1"},
+      {"id": "U4", "title": "Influence via communication interface", "mid_ref": "AI-7.1, AI-8.1"},
+      {"id": "U5", "title": "Protection against accidental or unintentional changes", "mid_ref": "AI-7.1, AI-7.2, AI-8.4"},
+      {"id": "U6", "title": "Protection against intentional changes", "mid_ref": "AI-7.1, AI-8.2, AI-8.3, AI-8.4"},
+      {"id": "U7", "title": "Parameter protection", "mid_ref": "AI-7.1, AI-8.2, AI-8.3, AI-8.4"},
+      {"id": "U8", "title": "Software authenticity and presentation of results", "mid_ref": "AI-7.1, AI-7.2, AI-7.6, AI-8.3, AI-10.2, AI-10.3, AI-10.4"},
+      {"id": "U9", "title": "Influence of other software", "mid_ref": "AI-7.6"}
+    ],
+    "L": [
+      {"id": "L1", "title": "Completeness of stored measurement data", "mid_ref": "AI-7.1, AI-8.4, AI-10.2"},
+      {"id": "L2", "title": "Protection against accidental or unintentional changes", "mid_ref": "AI-7.1, AI-7.2, AI-8.4"},
+      {"id": "L3", "title": "Integrity of data", "mid_ref": "AI-7.1, AI-8.4"},
+      {"id": "L4", "title": "Authenticity and traceability of stored measurement data", "mid_ref": "AI-7.1"}
+    ],
+    "T": [
+      {"id": "T1", "title": "Completeness of transmitted data"},
+      {"id": "T2", "title": "Protection against accidental or unintentional changes"},
+      {"id": "T3", "title": "Integrity of transmitted data"},
+      {"id": "T4", "title": "Authenticity and traceability of transmitted data"},
+      {"id": "T5", "title": "Confidentiality of keys, where used"},
+      {"id": "T6", "title": "Handling of interrupted or delayed transmission"}
+    ],
+    "S": [
+      {"id": "S1", "title": "Realisation of software separation",
+       "detail": "Legally relevant software and parameters clearly separated from other parts."},
+      {"id": "S2", "title": "Mixed indication",
+       "detail": "Results shown on a display or printout so that confusion with other information is not possible."},
+      {"id": "S3", "title": "Protective software interface",
+       "detail": "Communication with the legally relevant software carried out exclusively via a protective software interface."}
+    ],
+    "D": [
+      {"id": "D1", "title": "Download mechanism",
+       "detail": "Subsequent installation of legally relevant software runs automatically and does not require user interaction that could compromise it."},
+      {"id": "D2", "title": "Authentication of downloaded software"},
+      {"id": "D3", "title": "Integrity of downloaded software"},
+      {"id": "D4", "title": "Traceability of downloads",
+       "detail": "Downloads of legally relevant software are adequately traceable within the instrument."}
+    ]
+  },
+
+  "r76_annex_g_items": [
+    {"item": "Software identification is displayed or printed on command, or shown at start-up.", "clause": "Annex G"},
+    {"item": "The legally relevant software is protected against unauthorised modification, loading or swapping of hardware.", "clause": "Annex G"},
+    {"item": "Parameters that fix legally relevant characteristics are secured against unauthorised alteration.", "clause": "Annex G / 5.5"},
+    {"item": "A fault log or audit trail records changes to legally relevant parameters, where required.", "clause": "Annex G"},
+    {"item": "The checksum or signature algorithm used to protect the software is stated. CRC16 is an acceptable checksum algorithm.", "clause": "OIML D 31 §; referenced by Annex G"},
+    {"item": "Detected faults cause the instrument to be deactivated, or an alarm or error-log record to be generated.", "clause": "Annex G / 5.3"},
+    {"item": "Sealing, whether physical or electronic, prevents access to legally relevant software and parameters.", "clause": "7.2 / 4.1.2.4"}
+  ],
+
+  "record_fields": [
+    {"key": "software_identification", "label": "Software identification (name and version)", "required": true},
+    {"key": "checksum_algorithm", "label": "Checksum or signature algorithm", "required": true,
+     "examples": ["CRC16", "SHA-256"]},
+    {"key": "checksum_value", "label": "Checksum or signature value as displayed", "required": true},
+    {"key": "how_displayed", "label": "How the identification is made available", "type": "enum",
+     "options": ["Shown at start-up", "Displayed on command", "Printed on command", "Other"]},
+    {"key": "basic_type", "label": "Basic type", "type": "enum", "options": ["P", "U"], "required": true},
+    {"key": "extensions", "label": "Applicable extensions", "type": "multi", "options": ["L", "T", "S", "D", "I"]},
+    {"key": "risk_class", "label": "Risk class determined", "type": "enum",
+     "options": ["A", "B", "C", "D", "E", "F"], "required": true},
+    {"key": "risk_class_justification", "label": "Justification for the risk class", "required": true},
+    {"key": "sealing_description", "label": "Description of sealing provisions", "required": true}
+  ],
+
+  "verdict_rule": {
+    "kind": "FUNCTIONAL",
+    "rule": "Each applicable requirement is recorded as Complies, Does not comply, or Not applicable, with a remark. The software examination passes only when no applicable requirement is marked Does not comply."
+  }
+}
