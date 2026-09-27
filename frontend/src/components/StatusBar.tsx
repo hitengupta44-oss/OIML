@@ -54,10 +54,12 @@ export default function StatusBar({
 
   return (
     <div className="panel">
-      <div className="hd">
-        <span>Workflow</span>
-        <span className="cl">{here?.clause && here.clause !== "—" ? here.clause : ""}</span>
-      </div>
+      <header>
+        <h2>Workflow</h2>
+        <span className="cl">
+          {here?.clause && here.clause !== "\u2014" ? here.clause : ""}
+        </span>
+      </header>
 
       <div className="pad">
         <div className="wf-now">
