@@ -63,10 +63,11 @@ def run_typescript(seed):
     if out.returncode != 0:
         sys.exit(f"the TypeScript engine crashed:\n{out.stderr[:2000]}")
 
-    return {
-        row["ref"]: row
-        for row in (json.loads(line) for line in out.stdout.splitlines() if line.strip())
-    }
+    rows = [json.loads(l) for l in out.stdout.splitlines() if l.strip()]
+    return (
+        {r["ref"]: r for r in rows if not r.get("__format__")},
+        [r for r in rows if r.get("__format__")],
+    )
 
 
 def run_python(seed):
@@ -217,8 +218,28 @@ def main():
           f"({len(dataset) - len(boundary_cases())} from the seed, "
           f"{len(boundary_cases())} boundary cases)\n")
 
-    ts = run_typescript(combined)
+    ts, formats = run_typescript(combined)
     py = run_python(combined)
+
+    # -- how a number is written, before what it means --------------------
+    import importlib
+    sys.path.insert(0, os.path.join(ROOT, "backend"))
+    rnd = importlib.import_module("render")
+    fmt_bad = 0
+    for row in formats:
+        e, g = float(row["eG"]), float(row["g"])
+        want_mass = rnd.make_formatter(e)(g)
+        want_err = rnd.make_error_formatter(e)(g)
+        if row["mass"] != want_mass:
+            print(f"  [FAIL] formatMass(e={e:g}, {g:g}): "
+                  f"TypeScript {row['mass']!r}, Python {want_mass!r}")
+            fmt_bad += 1
+        if row["error"] != want_err:
+            print(f"  [FAIL] formatError(e={e:g}, {g:g}): "
+                  f"TypeScript {row['error']!r}, Python {want_err!r}")
+            fmt_bad += 1
+    if not fmt_bad:
+        print(f"  {len(formats)} number formats identical in both languages")
 
     only_py = sorted(set(py) - set(ts))
     only_ts = sorted(set(ts) - set(py))
@@ -227,7 +248,7 @@ def main():
     for ref in only_ts[:5]:
         print(f"  [FAIL] {ref}: the Python engine produced no result")
 
-    problems = len(only_py) + len(only_ts)
+    problems = len(only_py) + len(only_ts) + fmt_bad
     compared = 0
     test_rows = 0
 
