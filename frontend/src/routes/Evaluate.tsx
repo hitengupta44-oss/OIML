@@ -8,6 +8,8 @@ import {
 import { fetchEvaluation, fetchObservations, type Me } from "../lib/supabase";
 import { captureObservation, cacheEvaluation } from "../lib/offline";
 import { renderReport, verifyEvaluation, type VerifyResult } from "../lib/space";
+import StatusBar from "../components/StatusBar";
+import { isEditable } from "../lib/workflow";
 
 const DEMO: Instrument = {
   manufacturer: "Ishida Co. Ltd",
@@ -26,6 +28,7 @@ export default function Evaluate({ me }: { me: Me }) {
   const { ref } = useParams();
   const [inst, setInst] = useState<Instrument>(DEMO);
   const [evaluationId, setEvaluationId] = useState<string | null>(null);
+  const [status, setStatusLocal] = useState<string>("draft");
   const [zeroError, setZeroError] = useState(0);
   const [rows, setRows] = useState<Row[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
@@ -40,6 +43,7 @@ export default function Evaluate({ me }: { me: Me }) {
         const ev = (await fetchEvaluation(ref)) as any;
         await cacheEvaluation(ref, ev);
         setEvaluationId(ev.id);
+        setStatusLocal(String(ev.status ?? "draft"));
         setZeroError(Number(ev.zero_error_g ?? 0));
         setInst({
           manufacturer: ev.model.manufacturer.name,
@@ -197,6 +201,14 @@ export default function Evaluate({ me }: { me: Me }) {
       <div className="stack">
         <Spec inst={inst} setInst={setInst} />
         <Derived inst={inst} findings={findings} fmt={fmt} />
+        {ref && (
+          <StatusBar
+            refNo={ref}
+            status={status}
+            me={me}
+            onChanged={setStatusLocal}
+          />
+        )}
       </div>
 
       <div className="stack">
@@ -279,7 +291,16 @@ export default function Evaluate({ me }: { me: Me }) {
             </div>
           </div>
           <div className="bar">
-            <button className="btn" disabled={!!busy} onClick={saveOffline}>
+            <button
+              className="btn"
+              disabled={!!busy || (!!ref && !isEditable(status))}
+              title={
+                !!ref && !isEditable(status)
+                  ? `A record at "${status}" is frozen. Return it to draft to record more.`
+                  : undefined
+              }
+              onClick={saveOffline}
+            >
               {busy === "saving" ? "Recording…" : "Record observations"}
             </button>
             <button className="btn ghost" disabled={!!busy || !ref} onClick={runVerify}>
@@ -293,7 +314,9 @@ export default function Evaluate({ me }: { me: Me }) {
               {busy === "rendering" ? "Rendering…" : "Render report"}
             </button>
             <span className="note sp">
-              Loads include Min, Max and every load at which the permissible error changes.
+              {!!ref && !isEditable(status)
+                ? "This record is frozen at its current status. Observations are append-only and the database refuses edits."
+                : "Loads include Min, Max and every load at which the permissible error changes."}
             </span>
           </div>
         </div>
