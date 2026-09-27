@@ -79,13 +79,29 @@ KEEP_TOGETHER_ROWS = 3
 # reaches the right margin, whatever their author made them add up to.
 TEXT_WIDTH_CM = 21.0 - 2 * 1.8
 
-TEST_TITLES = {
-    "weighing_performance": ("Weighing performance", "A.4.4.1, A.4.4.3"),
-    "repeatability": ("Repeatability", "3.6.1"),
-    "eccentricity": ("Eccentricity", "A.4.7"),
-    "time_dependence": ("Time-dependence (creep)", "A.4.11.1"),
-    "electrical_disturbances": ("Electrical disturbances", "B.3"),
+# Clause references for the tests this system computes. Titles and section
+# numbers come from report-layout.json, not from here -- see summary_rows().
+CLAUSES = {
+    "weighing_performance": "A.4.4.1, A.4.4.3",
+    "repeatability": "3.6.1",
+    "eccentricity": "A.4.7",
+    "time_dependence": "A.4.11.1",
+    "electrical_disturbances": "B.3",
 }
+
+
+def _layout_sections():
+    """The seventeen numbered sections, read from the same file the template
+    is built from, so the summary can never list a section the report does
+    not contain."""
+    try:
+        with open(os.path.join(STD_DIR, "report-layout.json")) as f:
+            return json.load(f)["sections"]
+    except Exception:                                         # noqa: BLE001
+        # Without the layout, fall back to the tests we can compute. The
+        # report is still correct, only shorter.
+        return [{"no": i, "title": c.replace("_", " ").capitalize(),
+                 "test_code": c} for i, c in enumerate(CLAUSES, 1)]
 
 SOFFICE_CANDIDATES = ("soffice", "libreoffice",
                       "/usr/bin/soffice", "/usr/lib/libreoffice/program/soffice")
@@ -418,15 +434,29 @@ def build_context(ev: Dict[str, Any], computed: Dict[str, Any],
     efmt = make_error_formatter(float(inst["e_g"]))
     meta = _standard_meta(ev.get("standard_id", ""))
 
+    # One row per section of the form, so the summary is a map of the whole
+    # report rather than of the part that happened to be implemented. A test
+    # this system does not compute is marked "not covered", which is a
+    # different statement from "recorded and pending" and must not be
+    # confused with it.
     summary_rows = []
-    for no, (code, (title, clause)) in enumerate(TEST_TITLES.items(), start=1):
-        t = computed["tests"].get(code, {})
-        count = len(t.get("rows") or t.get("series") or [])
-        summary_rows.append({
-            "no": no, "title": title, "clause": clause,
-            "count": count if count else "not recorded",
-            "verdict": t.get("verdict", "PENDING"),
-        })
+    for spec in _layout_sections():
+        code = spec.get("test_code")
+        if code in CLAUSES:
+            t = computed["tests"].get(code, {})
+            count = len(t.get("rows") or t.get("series") or [])
+            summary_rows.append({
+                "no": spec["no"], "title": spec["title"],
+                "clause": CLAUSES[code],
+                "count": count if count else "not recorded",
+                "verdict": t.get("verdict", "PENDING"),
+            })
+        else:
+            summary_rows.append({
+                "no": spec["no"], "title": spec["title"],
+                "clause": "\u2014", "count": "\u2014",
+                "verdict": "NOT COVERED",
+            })
 
     lc = inst.get("load_cell") or ev.get("load_cell") or {}
     if isinstance(lc, str):

@@ -27,7 +27,7 @@ The rules as versioned data. No band value or operator appears in any .py or .ts
 | `influence-tests.json` | 13 KB | Annex B + D 11 — 10 influence factors, 8 disturbances, severities |
 | `master-data.json` | 7 KB | 8 RRSLs, 4 real approval marks, 30 manufacturers, load cells |
 | `mpe-bands.json` | 4 KB | R 76-1 Table 6 — permissible error bands with exact operators |
-| `report-layout.json` | 12 KB | R 76-2 report structure — cover fields, 17 sections, columns |
+| `report-layout.json` | 12 KB | R 76-2 report structure — cover fields, 17 sections, columns (read at build time by build_template.py and render.py) |
 | `software-checklist.json` | 8 KB | WELMEC 7.2 risk classes A–F, types P/U, extensions L/T/S/D |
 | `test-catalogue.json` | 24 KB | all 18 tests: clause refs, inputs, load strategies, tolerance kinds |
 | `weight-classes.json` | 6 KB | R 111-1 Table 1 — 30 nominals × 9 classes |
@@ -74,7 +74,7 @@ STAGE 2 — Hugging Face Docker Space. FastAPI, DOCX/PDF rendering, independent 
 | `README.md` | 6 KB | Stage 2 runbook |
 | `app.py` | 9 KB | FastAPI — health, verify, render, render-payload |
 | `auth.py` | 3 KB | Supabase JWT validation; roles from app_metadata |
-| `build_template.py` | 12 KB | regenerates templates/r76-2.docx from report-layout.json |
+| `build_template.py` | 15 KB | regenerates templates/r76-2.docx; all 17 sections read from report-layout.json |
 | `paths.py` | 2 KB | resolves standards/ and engine/ in repo or Space layout |
 | `recompute.py` | 11 KB | re-derives every verdict from the raw readings |
 | `render.py` | 16 KB | DOCX via docxtpl, PDF via LibreOffice headless |

@@ -47,7 +47,7 @@ import recompute as rc
 import render as rnd
 import supabase_io as db
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 OUT_DIR = os.environ.get("REPORT_OUT_DIR", tempfile.gettempdir())
 
 # Lock CORS to the frontend. A Space URL is public, so an open policy

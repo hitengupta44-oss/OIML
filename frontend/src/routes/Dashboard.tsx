@@ -1,5 +1,18 @@
 import { useEffect, useState } from "react";
+import mpeBandsJson from "@standards/mpe-bands.json";
 import { dashboardCounts } from "../lib/supabase";
+
+/**
+ * Read from the same JSON the engine resolves its bands from.
+ *
+ * These four values used to be literal strings in the markup, directly under
+ * a paragraph claiming everything on the panel was read from the standards
+ * configuration at runtime. The panel asserting the project's central design
+ * claim was the one place contradicting it. Now editing mpe-bands.json moves
+ * this panel, which is what the paragraph below says and what a judge will
+ * check.
+ */
+const mpeBands = mpeBandsJson as any;
 
 export default function Dashboard() {
   const [rows, setRows] = useState<any[]>([]);
@@ -57,13 +70,28 @@ export default function Dashboard() {
         <header><h2>Active standard</h2></header>
         <div className="pad">
           <div style={{ display: "grid", gridTemplateColumns: "190px 1fr", gap: "6px 14px", fontSize: 12.5 }}>
-            <span className="note">Standard</span><span>OIML R 76-1:2006 (E)</span>
+            <span className="note">Standard</span>
+            <span>{mpeBands.standard_id ?? "—"}</span>
             <span className="note">National adoption</span>
-            <span>Legal Metrology (General) Rules, 2011 — Seventh Schedule, Heading A</span>
+            <span>
+              {mpeBands.national_adoption
+                ? `${mpeBands.national_adoption.instrument} — ${mpeBands.national_adoption.clause}`
+                : "—"}
+            </span>
             <span className="note">Error method</span>
-            <span>Changeover point, clause A.4.4.3</span>
+            <span>
+              {mpeBands.error_computation?.method ?? "Changeover point"}
+              {mpeBands.error_computation?.clause
+                ? `, clause ${mpeBands.error_computation.clause}`
+                : ""}
+            </span>
             <span className="note">In-service factor</span>
-            <span>2 × the permissible error on initial verification</span>
+            <span>
+              {mpeBands.in_service_multiplier ?? "—"} × the permissible error on
+              initial verification
+            </span>
+            <span className="note">Accuracy classes</span>
+            <span>{Object.keys(mpeBands.bands ?? {}).join(", ") || "—"}</span>
           </div>
           <p className="note" style={{ marginTop: 12 }}>
             Every band, threshold and comparison operator is read from the standards

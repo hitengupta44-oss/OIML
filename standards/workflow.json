@@ -15,104 +15,348 @@
     "units_and_standards": "Legal Metrology (National Standards) Rules, 2011 — G.S.R. 211(E)",
     "numeration": "Legal Metrology (Numeration) Rules, 2011 — G.S.R. 13(E) dated 2011-01-07"
   },
-
   "states": [
-    {"code": "draft",         "label": "Draft",                "clause": "—",
-     "description": "Application and instrument details recorded; observations being entered.",
-     "editable": true,  "transitions": ["submitted", "cancelled"]},
-    {"code": "submitted",     "label": "Submitted for review",  "clause": "Rule 7",
-     "description": "Technician has completed the prescribed tests and submitted the record.",
-     "editable": false, "transitions": ["under_review", "draft"]},
-    {"code": "under_review",  "label": "Under review",          "clause": "Rule 7",
-     "description": "Metrologist verifying observations, calculations and compliance.",
-     "editable": false, "transitions": ["approved", "rejected", "draft"]},
-    {"code": "approved",      "label": "Approved",              "clause": "Rule 8",
-     "description": "Test report approved; certificate of approval may be issued.",
-     "editable": false, "transitions": ["issued"]},
-    {"code": "issued",        "label": "Certificate issued",    "clause": "Rule 8, Rule 11",
-     "description": "Certificate of approval issued and published in the Official Gazette.",
-     "editable": false, "transitions": ["revoked", "suspended", "amended"]},
-    {"code": "rejected",      "label": "Not recommended",       "clause": "Rule 9",
-     "description": "Issue of certificate of approval not recommended.",
-     "editable": false, "transitions": ["resubmitted"]},
-    {"code": "resubmitted",   "label": "Re-submitted",          "clause": "Rule 10",
-     "description": "Disapproved model re-submitted for approval after rectification.",
-     "editable": true,  "transitions": ["submitted"]},
-    {"code": "suspended",     "label": "Suspended",             "clause": "Rule 14",
-     "editable": false, "transitions": ["issued", "revoked"]},
-    {"code": "revoked",       "label": "Revoked",               "clause": "Rule 13",
-     "editable": false, "transitions": []},
-    {"code": "amended",       "label": "Amended",               "clause": "—",
-     "description": "Formal amendment to an issued report. The original remains immutable.",
-     "editable": false, "transitions": ["issued"]},
-    {"code": "cancelled",     "label": "Cancelled",             "clause": "—",
-     "editable": false, "transitions": []}
+    {
+      "code": "draft",
+      "label": "Draft",
+      "clause": "—",
+      "description": "Application and instrument details recorded; observations being entered.",
+      "editable": true,
+      "transitions": [
+        "submitted",
+        "cancelled"
+      ]
+    },
+    {
+      "code": "submitted",
+      "label": "Submitted for review",
+      "clause": "Rule 7",
+      "description": "Technician has completed the prescribed tests and submitted the record.",
+      "editable": false,
+      "transitions": [
+        "under_review",
+        "draft"
+      ]
+    },
+    {
+      "code": "under_review",
+      "label": "Under review",
+      "clause": "Rule 7",
+      "description": "Metrologist verifying observations, calculations and compliance.",
+      "editable": false,
+      "transitions": [
+        "approved",
+        "rejected",
+        "draft"
+      ]
+    },
+    {
+      "code": "approved",
+      "label": "Approved",
+      "clause": "Rule 8",
+      "description": "Test report approved; certificate of approval may be issued.",
+      "editable": false,
+      "transitions": [
+        "issued"
+      ]
+    },
+    {
+      "code": "issued",
+      "label": "Certificate issued",
+      "clause": "Rule 8, Rule 11",
+      "description": "Certificate of approval issued and published in the Official Gazette.",
+      "editable": false,
+      "transitions": [
+        "revoked",
+        "suspended",
+        "amended"
+      ]
+    },
+    {
+      "code": "rejected",
+      "label": "Not recommended",
+      "clause": "Rule 9",
+      "description": "Issue of certificate of approval not recommended.",
+      "editable": false,
+      "transitions": [
+        "resubmitted"
+      ]
+    },
+    {
+      "code": "resubmitted",
+      "label": "Re-submitted",
+      "clause": "Rule 10",
+      "description": "Disapproved model re-submitted for approval after rectification.",
+      "editable": true,
+      "transitions": [
+        "submitted"
+      ]
+    },
+    {
+      "code": "suspended",
+      "label": "Suspended",
+      "clause": "Rule 14",
+      "editable": false,
+      "transitions": [
+        "issued",
+        "revoked"
+      ]
+    },
+    {
+      "code": "revoked",
+      "label": "Revoked",
+      "clause": "Rule 13",
+      "editable": false,
+      "transitions": []
+    },
+    {
+      "code": "amended",
+      "label": "Amended",
+      "clause": "—",
+      "description": "Formal amendment to an issued report. The original remains immutable.",
+      "editable": false,
+      "transitions": [
+        "issued"
+      ]
+    },
+    {
+      "code": "cancelled",
+      "label": "Cancelled",
+      "clause": "—",
+      "editable": false,
+      "transitions": []
+    }
   ],
-
   "roles": [
-    {"code": "technician", "label": "Test engineer",
-     "can": ["create_evaluation", "enter_observations", "upload_attachments", "submit"],
-     "cannot": ["approve", "issue_certificate", "edit_after_submit"]},
-    {"code": "reviewer", "label": "Metrologist / reviewer",
-     "can": ["view_all_in_lab", "verify_observations", "return_to_draft", "recommend", "reject"],
-     "cannot": ["enter_observations", "issue_certificate"]},
-    {"code": "approver", "label": "Laboratory head",
-     "can": ["approve", "sign_report", "request_certificate"],
-     "cannot": ["enter_observations"]},
-    {"code": "director", "label": "Director of Legal Metrology",
-     "can": ["issue_certificate", "revoke", "suspend", "publish_gazette"],
-     "clause": "Rules 8, 11, 13, 14"},
-    {"code": "admin", "label": "System administrator",
-     "can": ["manage_users", "manage_labs", "manage_standard_versions", "manage_templates"],
-     "cannot": ["enter_observations", "approve", "issue_certificate"]},
-    {"code": "auditor", "label": "Auditor",
-     "can": ["view_all", "export_audit_log"], "cannot": ["any_write"]}
+    {
+      "code": "technician",
+      "label": "Test engineer",
+      "can": [
+        "create_evaluation",
+        "enter_observations",
+        "upload_attachments",
+        "submit"
+      ],
+      "cannot": [
+        "approve",
+        "issue_certificate",
+        "edit_after_submit"
+      ]
+    },
+    {
+      "code": "reviewer",
+      "label": "Metrologist / reviewer",
+      "can": [
+        "view_all_in_lab",
+        "verify_observations",
+        "return_to_draft",
+        "recommend",
+        "reject"
+      ],
+      "cannot": [
+        "enter_observations",
+        "issue_certificate"
+      ]
+    },
+    {
+      "code": "approver",
+      "label": "Laboratory head",
+      "can": [
+        "approve",
+        "sign_report",
+        "request_certificate"
+      ],
+      "cannot": [
+        "enter_observations"
+      ]
+    },
+    {
+      "code": "director",
+      "label": "Director of Legal Metrology",
+      "can": [
+        "issue_certificate",
+        "revoke",
+        "suspend",
+        "publish_gazette"
+      ],
+      "clause": "Rules 8, 11, 13, 14"
+    },
+    {
+      "code": "admin",
+      "label": "System administrator",
+      "can": [
+        "manage_users",
+        "manage_labs",
+        "manage_standard_versions",
+        "manage_templates"
+      ],
+      "cannot": [
+        "enter_observations",
+        "approve",
+        "issue_certificate"
+      ]
+    },
+    {
+      "code": "auditor",
+      "label": "Auditor",
+      "can": [
+        "view_all",
+        "export_audit_log"
+      ],
+      "cannot": [
+        "any_write"
+      ]
+    }
   ],
-
   "approval_mark": {
     "clause": "Rule 12(1)",
     "rule": "The mark assigned to the model shall contain the national identification letters IND, the last two digits of the year of issue, the code number assigned to the laboratory, and the code number assigned to the model.",
     "format": "IND/{YY}/{LAB_CODE}/{MODEL_CODE}",
     "regex": "^IND/\\d{2}/\\d{2}/\\d{2,4}$",
-    "examples": ["IND/09/07/01", "IND/09/07/09", "IND/09/07/11", "IND/09/07/15"],
+    "examples": [
+      "IND/09/07/01",
+      "IND/09/07/09",
+      "IND/09/07/11",
+      "IND/09/07/15"
+    ],
     "affixing": "Clearly and legibly affixed at the place specified in the certificate, and on each weight or measure produced in accordance with the approved model.",
     "exceptions": [
       "Where the mark cannot be affixed (fragile or too small items), it may be associated with the conditions specified in the certificate of approval.",
       "Where the approval is of a limited character, the mark shall be accompanied by a special mark indicating the limitations; different special marks may be made for different limitations."
     ]
   },
-
   "certificate_fields": {
     "clause": "Rule 11(1)",
     "fields": [
-      {"key": "certificate_number", "label": "Number of the certificate", "clause": "11(1)(a)", "required": true},
-      {"key": "model_description", "label": "Brief description of the model", "clause": "11(1)(b)", "required": true},
-      {"key": "approval_mark", "label": "Mark assigned to the approved model", "clause": "11(1)(c)", "required": true},
-      {"key": "category", "label": "Category of weight or measure", "clause": "11(1)(d)", "required": true},
-      {"key": "test_results_summary", "label": "Brief statement of the results of the tests", "clause": "11(1)(e)", "required": true},
-      {"key": "special_conditions", "label": "Special conditions for manufacture, verification and use", "clause": "11(1)(f)", "required": false},
-      {"key": "seal_locations", "label": "Place or places where the verification seal or stamp may be affixed", "clause": "11(1)(g)", "required": true},
-      {"key": "special_use", "label": "Special use, where applicable", "clause": "11(3)", "required": false},
-      {"key": "gazette_date", "label": "Date of publication in the Official Gazette", "clause": "11(2), 11(4)", "required": true,
-       "note": "The certificate becomes effective on and from the date of its publication in the Official Gazette."}
+      {
+        "key": "certificate_number",
+        "label": "Number of the certificate",
+        "clause": "11(1)(a)",
+        "required": true
+      },
+      {
+        "key": "model_description",
+        "label": "Brief description of the model",
+        "clause": "11(1)(b)",
+        "required": true
+      },
+      {
+        "key": "approval_mark",
+        "label": "Mark assigned to the approved model",
+        "clause": "11(1)(c)",
+        "required": true
+      },
+      {
+        "key": "category",
+        "label": "Category of weight or measure",
+        "clause": "11(1)(d)",
+        "required": true
+      },
+      {
+        "key": "test_results_summary",
+        "label": "Brief statement of the results of the tests",
+        "clause": "11(1)(e)",
+        "required": true
+      },
+      {
+        "key": "special_conditions",
+        "label": "Special conditions for manufacture, verification and use",
+        "clause": "11(1)(f)",
+        "required": false
+      },
+      {
+        "key": "seal_locations",
+        "label": "Place or places where the verification seal or stamp may be affixed",
+        "clause": "11(1)(g)",
+        "required": true
+      },
+      {
+        "key": "special_use",
+        "label": "Special use, where applicable",
+        "clause": "11(3)",
+        "required": false
+      },
+      {
+        "key": "gazette_date",
+        "label": "Date of publication in the Official Gazette",
+        "clause": "11(2), 11(4)",
+        "required": true,
+        "note": "The certificate becomes effective on and from the date of its publication in the Official Gazette."
+      }
     ]
   },
-
   "required_attachments": {
     "source": "Revised procedure for the submission of applications for model approval, Department of Consumer Affairs; read with Rules 5 and 6",
     "items": [
-      {"key": "application_form", "label": "Application for approval of model", "clause": "Rule 5", "required": true, "accept": ["pdf"]},
-      {"key": "technical_drawings", "label": "Drawings and technical documentation", "clause": "Rule 5", "required": true, "accept": ["pdf", "png", "jpg"]},
-      {"key": "sealing_diagram", "label": "Description of sealing provisions with schematic diagram", "required": true, "accept": ["pdf", "png", "jpg"],
-       "note": "Nature, location and type of sealing to secure the weight or measure against fraudulent interference."},
-      {"key": "undertaking", "label": "Signed undertaking that no alteration will be made before or after sale", "required": true, "accept": ["pdf"]},
-      {"key": "photographs", "label": "Two postcard-size photographs of the model", "required": true, "min_count": 2, "accept": ["png", "jpg"]},
-      {"key": "foreign_certificate", "label": "Foreign model or pattern approval certificate", "required": false, "accept": ["pdf"],
-       "note": "With an English translation if the original is in another language."},
-      {"key": "fee_receipt", "label": "Proof of deposit of the prescribed test fee", "clause": "Rule 19", "required": true, "accept": ["pdf"]}
+      {
+        "key": "application_form",
+        "label": "Application for approval of model",
+        "clause": "Rule 5",
+        "required": true,
+        "accept": [
+          "pdf"
+        ]
+      },
+      {
+        "key": "technical_drawings",
+        "label": "Drawings and technical documentation",
+        "clause": "Rule 5",
+        "required": true,
+        "accept": [
+          "pdf",
+          "png",
+          "jpg"
+        ]
+      },
+      {
+        "key": "sealing_diagram",
+        "label": "Description of sealing provisions with schematic diagram",
+        "required": true,
+        "accept": [
+          "pdf",
+          "png",
+          "jpg"
+        ],
+        "note": "Nature, location and type of sealing to secure the weight or measure against fraudulent interference."
+      },
+      {
+        "key": "undertaking",
+        "label": "Signed undertaking that no alteration will be made before or after sale",
+        "required": true,
+        "accept": [
+          "pdf"
+        ]
+      },
+      {
+        "key": "photographs",
+        "label": "Two postcard-size photographs of the model",
+        "required": true,
+        "min_count": 2,
+        "accept": [
+          "png",
+          "jpg"
+        ]
+      },
+      {
+        "key": "foreign_certificate",
+        "label": "Foreign model or pattern approval certificate",
+        "required": false,
+        "accept": [
+          "pdf"
+        ],
+        "note": "With an English translation if the original is in another language."
+      },
+      {
+        "key": "fee_receipt",
+        "label": "Proof of deposit of the prescribed test fee",
+        "clause": "Rule 19",
+        "required": true,
+        "accept": [
+          "pdf"
+        ]
+      }
     ]
   },
-
   "laboratory_recognition": {
     "clause": "Rule 4",
     "criteria": [
@@ -121,7 +365,6 @@
     ],
     "allocation_rule": "In allocating any model to a laboratory, the Director shall take into account the facilities available in that laboratory for the approval of such model (Rule 3(3))."
   },
-
   "revocation_grounds": {
     "clause": "Rule 13(1)",
     "grounds": [
@@ -131,22 +374,70 @@
     ],
     "publication": "Every order of revocation or suspension shall be published (Rule 15)."
   },
-
   "exemptions": {
     "clause": "Rule 17",
     "note": "Model approval is ordinarily not required for certain items, including cast iron, brass, bullion or carat weights, beam scales, length measures other than measuring tapes ordinarily used in retail trade for textiles or timber, and capacity measures not exceeding twenty litres."
   },
-
   "report_numbering": {
     "pattern": "{LAB_CODE}/NAWI/{YYYY}/{SEQ:04d}",
     "example": "RRSL-FBD/NAWI/2026/0042",
     "note": "Internal laboratory report reference. Distinct from the certificate number issued under Rule 11(1)(a)."
   },
-
   "immutability_rules": [
     "Observations are append-only. A correction creates a new row referencing the superseded one; nothing is overwritten.",
     "An evaluation in state 'issued' cannot be edited. Changes require a formal amendment that creates a new report version.",
     "Every report version stores the standard_id it was evaluated under, so historical reports re-render under the rules in force at the time.",
     "Every stored record carries is_synthetic; a certificate may never be issued against synthetic data."
-  ]
+  ],
+  "role_may_set": {
+    "_note": "Which roles may move an evaluation INTO each status. This is the single source of truth: app.role_may_set() in supabase/migrations/0002_functions.sql enforces it server-side, the frontend reads it to decide which buttons to show, and scripts/check_workflow_consistency.py fails the build if they diverge. The UI gate is a courtesy; the database gate is the one that matters.",
+    "submitted": [
+      "technician",
+      "admin"
+    ],
+    "draft": [
+      "technician",
+      "reviewer",
+      "admin"
+    ],
+    "under_review": [
+      "reviewer",
+      "admin"
+    ],
+    "approved": [
+      "approver",
+      "admin"
+    ],
+    "rejected": [
+      "reviewer",
+      "approver",
+      "admin"
+    ],
+    "issued": [
+      "director",
+      "admin"
+    ],
+    "suspended": [
+      "director",
+      "admin"
+    ],
+    "revoked": [
+      "director",
+      "admin"
+    ],
+    "amended": [
+      "approver",
+      "director",
+      "admin"
+    ],
+    "resubmitted": [
+      "technician",
+      "admin"
+    ],
+    "cancelled": [
+      "technician",
+      "reviewer",
+      "admin"
+    ]
+  }
 }

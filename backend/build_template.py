@@ -12,6 +12,12 @@ keeping them in step with report-layout.json is exactly the kind of manual
 duplication this whole project exists to remove, so the first version is
 generated from the layout.
 
+The seventeen numbered test sections are read from report-layout.json at
+build time: their numbers, titles and order are not written in this file.
+Five of them carry a results table; the rest state that the test was not
+carried out, so the numbering matches the published form and any omission is
+explicit rather than invisible.
+
 Replacing this with a hand-typeset version that matches the printed OIML
 form is a drop-in: same placeholders, same filename, no code change. That
 is the point of the docxtpl pipeline.
@@ -184,6 +190,39 @@ def table_slot(doc, key):
     return p
 
 
+# The tests this system computes and tabulates, keyed by the test_code that
+# standards/report-layout.json uses. Everything else in the layout is emitted
+# as a heading with a "not carried out" line. Adding a test means adding a
+# renderer in render.py and an entry here -- the section itself already exists,
+# because it comes from the layout.
+RENDERED = {
+    "weighing_performance": (
+        "A.4.4.1, A.4.4.3",
+        "P = I + \u00bde \u2212 \u0394L,   E = P \u2212 L,   Ec = E \u2212 E\u2080.  "
+        "Ec is compared against the maximum permissible error for the applied load.",
+        "tbl_weighing"),
+    "repeatability": (
+        "3.6.1",
+        "The difference between the results of several weighings of the same load "
+        "shall not be greater than the absolute value of the mpe for that load.",
+        "tbl_repeatability"),
+    "eccentricity": (
+        "A.4.7",
+        "The load is applied to the centre and to each quarter segment of the load "
+        "receptor. Each indication shall stay within the mpe for that load.",
+        "tbl_eccentricity"),
+    "time_dependence": (
+        "A.4.11.1",
+        "Within the first 30 minutes the indication shall not differ by more than 0.5 e.",
+        "tbl_creep"),
+    "electrical_disturbances": (
+        "B.3",
+        "The difference between the indication with and without the disturbance shall "
+        "not exceed 1 e, or the instrument shall detect and react to a significant fault.",
+        "tbl_disturbances"),
+}
+
+
 # ---------------------------------------------------------------------------
 # build
 # ---------------------------------------------------------------------------
@@ -238,7 +277,7 @@ def build():
     ])
 
     # ---------------- 1. general information ----------------
-    heading(doc, "1.  General information concerning the type")
+    heading(doc, "A.  General information concerning the type")
     kv_table(doc, [
         ("Manufacturer", "{{ instrument.manufacturer }}"),
         ("Model", "{{ instrument.model }}"),
@@ -258,51 +297,66 @@ def build():
         ("Standard weights used", "{{ instrument.weight_set or weight_set_id or '—' }}"),
     ])
 
-    # ---------------- 2. specification check ----------------
-    heading(doc, "2.  Examination of the declared specification")
+    # ---------------- B. test equipment ----------------
+    # report-layout.json front_matter: "Information concerning the test
+    # equipment used for type evaluation". An error is only meaningful next to
+    # the traceability of the weights that produced it.
+    heading(doc, "B.  Information concerning the test equipment used")
+    kv_table(doc, [
+        ("Standard weights used", "{{ instrument.weight_set or weight_set_id or '\u2014' }}"),
+        ("Weight class", "{{ weight_class or 'as recorded in the weight set' }}"),
+        ("Traceability", "{{ traceability or 'Certificates held by the laboratory' }}"),
+        ("Testing laboratory", "{{ lab.name }} ({{ lab.code }})"),
+    ])
+
+    # ---------------- C. specification check ----------------
+    heading(doc, "C.  Examination of the declared specification")
     para(doc, "Checked against {{ standard_title }}, clause 3.2 and Table 3 "
               "before any test data was recorded.",
          size=9, color=SLATE, space_after=6, keep_with_next=True)
     table_slot(doc, "tbl_specification")
 
-    # ---------------- 3. summary ----------------
-    heading(doc, "3.  Summary of type evaluation")
+    # ---------------- D. summary ----------------
+    heading(doc, "D.  Summary of type evaluation")
     table_slot(doc, "tbl_summary")
 
     # ---------------- numbered test sections ----------------
-    # No page break here. The sections flow, and keep_with_next on every
-    # heading, clause line and note keeps each section's preamble attached to
-    # its table -- which packs the pages without ever separating a heading
-    # from the data underneath it.
-    # Section order, titles and clause references come from the layout; the
-    # tables themselves are built by render.py from the same source.
-    section_specs = [
-        (4, "Weighing performance", "A.4.4.1, A.4.4.3", "tbl_weighing",
-         "P = I + \u00bde \u2212 \u0394L,   E = P \u2212 L,   Ec = E \u2212 E\u2080.  "
-         "Ec is compared against the maximum permissible error for the applied load."),
-        (5, "Repeatability", "3.6.1", "tbl_repeatability",
-         "The difference between the results of several weighings of the same load "
-         "shall not be greater than the absolute value of the mpe for that load."),
-        (6, "Eccentricity", "A.4.7", "tbl_eccentricity",
-         "The load is applied to the centre and to each quarter segment of the load "
-         "receptor. Each indication shall stay within the mpe for that load."),
-        (7, "Time-dependence (creep)", "A.4.11.1", "tbl_creep",
-         "Within the first 30 minutes the indication shall not differ by more than 0.5 e."),
-        (8, "Electrical disturbances", "B.3", "tbl_disturbances",
-         "The difference between the indication with and without the disturbance shall "
-         "not exceed 1 e, or the instrument shall detect and react to a significant fault."),
-    ]
+    # Driven by standards/report-layout.json, genuinely: the section numbers,
+    # titles and order below are read from the file, not written here. An
+    # earlier version opened the layout and then ignored it, hardcoding five
+    # sections while the docstring claimed otherwise -- exactly the manual
+    # duplication this project exists to remove, sitting in the middle of the
+    # project.
+    #
+    # All seventeen sections of the R 76-2 form are emitted. Five carry a
+    # table; the rest carry a line saying the test was not carried out. A
+    # missing section reads as an oversight, whereas a section that states it
+    # was not performed is a finding a reviewer can act on -- and it keeps the
+    # section numbering identical to the published form, so a clause reference
+    # means the same thing in both documents.
+    for spec in layout["sections"]:
+        no = spec["no"]
+        code = spec.get("test_code")
+        heading(doc, f"{no}.  {spec['title']}")
 
-    for no, title_text, clause, slot, note in section_specs:
-        heading(doc, f"{no}.  {title_text}")
-        para(doc, clause, size=9, color=SLATE, space_after=2,
-             keep_with_next=True)
-        para(doc, note, size=8.5, color=SLATE, italic=True, space_after=4,
-             keep_with_next=True)
-        table_slot(doc, slot)
+        rendered = RENDERED.get(code)
+        if rendered:
+            clause, note, slot = rendered
+            para(doc, clause, size=9, color=SLATE, space_after=2,
+                 keep_with_next=True)
+            para(doc, note, size=8.5, color=SLATE, italic=True, space_after=4,
+                 keep_with_next=True)
+            table_slot(doc, slot)
+        else:
+            para(doc,
+                 "Not carried out in this evaluation. This report covers the "
+                 "tests listed in the summary above; the remaining tests of "
+                 "the form are shown here so that the section numbering "
+                 "matches the published format and the omission is explicit.",
+                 size=8.5, color=SLATE, italic=True, space_after=2)
 
     # ---------------- conclusion ----------------
-    heading(doc, "9.  Conclusion")
+    heading(doc, "E.  Conclusion")
     para(doc, "{{ conclusion_text }}", size=10, space_after=10)
 
     kv_table(doc, [
@@ -320,7 +374,7 @@ def build():
          keep_with_next=True)
     para(doc, "{{ seal_locations or '—' }}", size=10, space_after=0)
 
-    heading(doc, "10.  Signatures", size=11)
+    heading(doc, "F.  Signatures", size=11)
     t = doc.add_table(rows=2, cols=3)
     t.style = "Table Grid"
     t.autofit = False
@@ -363,7 +417,9 @@ def build():
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     doc.save(OUT)
     print(f"wrote {OUT}")
-    print(f"  sections: {len(section_specs) + 3} + conclusion + signatures")
+    rendered = sum(1 for x in layout["sections"] if x.get("test_code") in RENDERED)
+    print(f"  {len(layout['sections'])} numbered sections from report-layout.json, "
+          f"{rendered} with results tables")
     print(f"  size: {os.path.getsize(OUT) / 1024:.1f} KB")
 
 

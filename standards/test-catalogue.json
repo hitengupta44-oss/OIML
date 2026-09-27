@@ -24,17 +24,50 @@
       "load_points": {
         "strategy": "derived",
         "rule": "At least five loads including Min, Max and the loads at which the mpe changes band.",
-        "directions": ["increasing", "decreasing"]
+        "directions": [
+          "increasing",
+          "decreasing"
+        ]
       },
       "inputs": [
-        {"key": "load_g", "label": "True test load L", "type": "mass", "required": true},
-        {"key": "indication_g", "label": "Indication I", "type": "mass", "required": true},
-        {"key": "delta_load_g", "label": "Additional weights ΔL", "type": "mass", "required": false,
-         "help": "Sum of e/10 weights added until the indication increased by one increment."},
-        {"key": "direction", "label": "Direction", "type": "enum", "options": ["increasing", "decreasing"]}
+        {
+          "key": "load_g",
+          "label": "True test load L",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "indication_g",
+          "label": "Indication I",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "delta_load_g",
+          "label": "Additional weights ΔL",
+          "type": "mass",
+          "required": false,
+          "help": "Sum of e/10 weights added until the indication increased by one increment."
+        },
+        {
+          "key": "direction",
+          "label": "Direction",
+          "type": "enum",
+          "options": [
+            "increasing",
+            "decreasing"
+          ]
+        }
       ],
-      "formulae": {"P": "I + 0.5*e - dL", "E": "P - L", "Ec": "E - E0"},
-      "tolerance": {"kind": "MPE", "compare": "Ec"},
+      "formulae": {
+        "P": "I + 0.5*e - dL",
+        "E": "P - L",
+        "Ec": "E - E0"
+      },
+      "tolerance": {
+        "kind": "MPE",
+        "compare": "Ec"
+      },
       "notes": [
         "The rounding error shall be eliminated if d > 0.2 e (3.5.3.2).",
         "The error of any single weighing result shall by itself not exceed the mpe (3.6)."
@@ -47,17 +80,38 @@
       "clause_r76_1": "A.5.3.2 (3.9.2.3)",
       "clause_r76_2_section": 2,
       "applies_to": "electronic",
-      "engine": "implemented",
+      "engine": "catalogued",
       "summary": "Set to zero, change to the highest and lowest specified temperatures and 5 °C if applicable, and determine the change in zero indication.",
-      "load_points": {"strategy": "fixed", "loads": ["zero"]},
+      "load_points": {
+        "strategy": "fixed",
+        "loads": [
+          "zero"
+        ]
+      },
       "inputs": [
-        {"key": "temperature_c", "label": "Temperature", "type": "number", "unit": "°C", "required": true},
-        {"key": "zero_error_g", "label": "Error at zero", "type": "mass", "required": true}
+        {
+          "key": "temperature_c",
+          "label": "Temperature",
+          "type": "number",
+          "unit": "°C",
+          "required": true
+        },
+        {
+          "key": "zero_error_g",
+          "label": "Error at zero",
+          "type": "mass",
+          "required": true
+        }
       ],
       "tolerance": {
         "kind": "ABSOLUTE_E",
         "limit_e": 0.5,
-        "per_degrees": {"I": 1, "II": 5, "III": 5, "IIII": 5},
+        "per_degrees": {
+          "I": 1,
+          "II": 5,
+          "III": 5,
+          "IIII": 5
+        },
         "rule": "The change in zero indication shall not exceed 0.5 e per 1 °C for class I instruments, or per 5 °C for other classes, between any two consecutive temperatures of the test."
       },
       "notes": [
@@ -81,18 +135,42 @@
         "help": "Approximately one third of Max, unless the instrument's own rules dictate otherwise."
       },
       "positions": {
-        "le_4_supports": ["Centre", "Segment 1", "Segment 2", "Segment 3", "Segment 4"],
+        "le_4_supports": [
+          "Centre",
+          "Segment 1",
+          "Segment 2",
+          "Segment 3",
+          "Segment 4"
+        ],
         "gt_4_supports_rule": "Apply the load over each support on an area of the same order as 1/n of the load receptor surface, where n is the number of points of support. Where two supports are too close, double the load and distribute it over twice the area on both sides of the axis connecting them.",
         "special_receptors": "Tanks, hoppers and similar receptors follow A.4.7.3.",
         "rolling_loads": "A.4.7.4",
         "mobile_instruments": "A.4.7.5"
       },
       "inputs": [
-        {"key": "position", "label": "Position", "type": "enum", "required": true},
-        {"key": "indication_g", "label": "Indication I", "type": "mass", "required": true},
-        {"key": "delta_load_g", "label": "Additional weights ΔL", "type": "mass", "required": false}
+        {
+          "key": "position",
+          "label": "Position",
+          "type": "enum",
+          "required": true
+        },
+        {
+          "key": "indication_g",
+          "label": "Indication I",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "delta_load_g",
+          "label": "Additional weights ΔL",
+          "type": "mass",
+          "required": false
+        }
       ],
-      "tolerance": {"kind": "MPE", "compare": "Ec"}
+      "tolerance": {
+        "kind": "MPE",
+        "compare": "Ec"
+      }
     },
     {
       "no": 4,
@@ -101,10 +179,17 @@
       "clause_r76_1": "A.4.8 (3.8)",
       "clause_r76_2_section": 4,
       "applies_to": "all",
-      "engine": "implemented",
+      "engine": "catalogued",
       "summary": "Confirm that a small additional load produces an unambiguous change of one scale interval.",
-      "load_points": {"strategy": "fixed_fractions", "fractions": [0.0, 0.5, 1.0],
-                      "help": "Three different loads, e.g. Min, ½ Max and Max."},
+      "load_points": {
+        "strategy": "fixed_fractions",
+        "fractions": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "help": "Three different loads, e.g. Min, ½ Max and Max."
+      },
       "variants": {
         "digital": {
           "clause": "A.4.8.2",
@@ -118,10 +203,30 @@
         }
       },
       "inputs": [
-        {"key": "load_g", "label": "Test load", "type": "mass", "required": true},
-        {"key": "indication_before_g", "label": "Indication before, I − d", "type": "mass", "required": true},
-        {"key": "extra_load_g", "label": "Extra load applied (1.4 d)", "type": "mass", "required": true},
-        {"key": "indication_after_g", "label": "Indication after", "type": "mass", "required": true}
+        {
+          "key": "load_g",
+          "label": "Test load",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "indication_before_g",
+          "label": "Indication before, I − d",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "extra_load_g",
+          "label": "Extra load applied (1.4 d)",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "indication_after_g",
+          "label": "Indication after",
+          "type": "mass",
+          "required": true
+        }
       ],
       "tolerance": {
         "kind": "FUNCTIONAL",
@@ -137,14 +242,39 @@
       "applies_to": "non_self_indicating",
       "engine": "checklist",
       "summary": "With the instrument oscillating normally, apply an extra load equal to the mpe for the applied load (not less than 1 mg) and measure the permanent displacement of the indication.",
-      "load_points": {"strategy": "fixed_fractions", "fractions": [0.0, 1.0],
-                      "help": "A minimum of two different loads, e.g. zero and Max."},
+      "load_points": {
+        "strategy": "fixed_fractions",
+        "fractions": [
+          0.0,
+          1.0
+        ],
+        "help": "A minimum of two different loads, e.g. zero and Max."
+      },
       "inputs": [
-        {"key": "load_g", "label": "Test load", "type": "mass", "required": true},
-        {"key": "extra_load_g", "label": "Extra load (= mpe, min 1 mg)", "type": "mass", "required": true},
-        {"key": "displacement_mm", "label": "Permanent displacement", "type": "number", "unit": "mm", "required": true}
+        {
+          "key": "load_g",
+          "label": "Test load",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "extra_load_g",
+          "label": "Extra load (= mpe, min 1 mg)",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "displacement_mm",
+          "label": "Permanent displacement",
+          "type": "number",
+          "unit": "mm",
+          "required": true
+        }
       ],
-      "tolerance": {"kind": "FUNCTIONAL", "rule": "A permanent displacement of the indication shall be observed."}
+      "tolerance": {
+        "kind": "FUNCTIONAL",
+        "rule": "A permanent displacement of the indication shall be observed."
+      }
     },
     {
       "no": 6,
@@ -158,26 +288,52 @@
       "load_points": {
         "strategy": "series",
         "type_approval": {
-          "series": [{"fraction": 0.5, "label": "about 50 % of Max"},
-                     {"fraction": 1.0, "label": "close to 100 % of Max"}],
+          "series": [
+            {
+              "fraction": 0.5,
+              "label": "about 50 % of Max"
+            },
+            {
+              "fraction": 1.0,
+              "label": "close to 100 % of Max"
+            }
+          ],
           "weighings_rule": "10 weighings per series if Max < 1 000 kg, otherwise at least 3."
         },
         "verification": {
-          "series": [{"fraction": 0.8, "label": "about 0.8 Max"}],
+          "series": [
+            {
+              "fraction": 0.8,
+              "label": "about 0.8 Max"
+            }
+          ],
           "weighings_rule": "3 weighings for classes III and IIII, 6 weighings for classes I and II."
         }
       },
       "inputs": [
-        {"key": "load_g", "label": "Test load", "type": "mass", "required": true},
-        {"key": "indication_g", "label": "Indication", "type": "mass", "required": true, "repeat": true}
+        {
+          "key": "load_g",
+          "label": "Test load",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "indication_g",
+          "label": "Indication",
+          "type": "mass",
+          "required": true,
+          "repeat": true
+        }
       ],
       "tolerance": {
         "kind": "MPE",
         "compare": "spread",
         "rule": "The difference between the results of several weighings of the same load shall not be greater than the absolute value of the mpe for that load."
       },
-      "notes": ["Automatic zero-setting or zero-tracking shall be in operation during the test.",
-                "Reset to zero between weighings if a zero deviation occurs; the true zero need not be determined."]
+      "notes": [
+        "Automatic zero-setting or zero-tracking shall be in operation during the test.",
+        "Reset to zero between weighings if a zero deviation occurs; the true zero need not be determined."
+      ]
     },
     {
       "no": 7,
@@ -193,21 +349,60 @@
           "clause": "A.4.11.1",
           "procedure": "Load close to Max. Read as soon as the indication stabilises, then note the indication over four hours. Temperature shall not vary more than 2 °C.",
           "early_termination": "May be terminated after 30 minutes if the indication differs by less than 0.5 e during the first 30 minutes and the difference between 15 and 30 minutes is less than 0.2 e.",
-          "read_points_minutes": [0, 15, 30, 60, 120, 240],
-          "tolerance": {"kind": "ABSOLUTE_E", "limit_e": 0.5, "window_minutes": 30,
-                        "secondary": {"limit_e": 0.2, "between_minutes": [15, 30]}}
+          "read_points_minutes": [
+            0,
+            15,
+            30,
+            60,
+            120,
+            240
+          ],
+          "tolerance": {
+            "kind": "ABSOLUTE_E",
+            "limit_e": 0.5,
+            "window_minutes": 30,
+            "secondary": {
+              "limit_e": 0.2,
+              "between_minutes": [
+                15,
+                30
+              ]
+            }
+          }
         },
         "zero_return": {
           "clause": "A.4.11.2",
           "procedure": "Determine the deviation in the zero indication before and after loading close to Max for half an hour. For multiple range instruments continue reading zero for 5 minutes after stabilisation.",
-          "tolerance": {"kind": "ABSOLUTE_E", "limit_e": 0.5},
-          "notes": ["Automatic zero-setting or zero-tracking shall not be in operation."]
+          "tolerance": {
+            "kind": "ABSOLUTE_E",
+            "limit_e": 0.5
+          },
+          "notes": [
+            "Automatic zero-setting or zero-tracking shall not be in operation."
+          ]
         }
       },
       "inputs": [
-        {"key": "elapsed_minutes", "label": "Elapsed time", "type": "number", "unit": "min", "required": true},
-        {"key": "indication_g", "label": "Indication", "type": "mass", "required": true},
-        {"key": "temperature_c", "label": "Temperature", "type": "number", "unit": "°C", "required": false}
+        {
+          "key": "elapsed_minutes",
+          "label": "Elapsed time",
+          "type": "number",
+          "unit": "min",
+          "required": true
+        },
+        {
+          "key": "indication_g",
+          "label": "Indication",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "temperature_c",
+          "label": "Temperature",
+          "type": "number",
+          "unit": "°C",
+          "required": false
+        }
       ]
     },
     {
@@ -225,7 +420,9 @@
         "Printing or data storage takes place only when equilibrium is stable.",
         "The indication is stable before and after the operation."
       ],
-      "tolerance": {"kind": "FUNCTIONAL"}
+      "tolerance": {
+        "kind": "FUNCTIONAL"
+      }
     },
     {
       "no": 9,
@@ -234,20 +431,51 @@
       "clause_r76_1": "A.5.1 (3.9.1.1)",
       "clause_r76_2_section": 8,
       "applies_to": "classes_II_III_IIII",
-      "engine": "implemented",
+      "engine": "catalogued",
       "summary": "Tilt the instrument within the specified limits, at no load and loaded, and determine the change of indication.",
       "variants": {
-        "with_level_indicator": {"clause": "A.5.1.1", "no_load": "A.5.1.1.1", "loaded": "A.5.1.1.2"},
-        "other_instruments": {"clause": "A.5.1.2"},
-        "mobile_outdoor": {"clause": "A.5.1.3 (4.18.1)"}
+        "with_level_indicator": {
+          "clause": "A.5.1.1",
+          "no_load": "A.5.1.1.1",
+          "loaded": "A.5.1.1.2"
+        },
+        "other_instruments": {
+          "clause": "A.5.1.2"
+        },
+        "mobile_outdoor": {
+          "clause": "A.5.1.3 (4.18.1)"
+        }
       },
       "inputs": [
-        {"key": "tilt_direction", "label": "Direction of tilt", "type": "enum",
-         "options": ["Longitudinal +", "Longitudinal −", "Transverse +", "Transverse −"]},
-        {"key": "tilt_value", "label": "Tilt applied", "type": "number", "unit": "% or °", "required": true},
-        {"key": "indication_g", "label": "Indication", "type": "mass", "required": true}
+        {
+          "key": "tilt_direction",
+          "label": "Direction of tilt",
+          "type": "enum",
+          "options": [
+            "Longitudinal +",
+            "Longitudinal −",
+            "Transverse +",
+            "Transverse −"
+          ]
+        },
+        {
+          "key": "tilt_value",
+          "label": "Tilt applied",
+          "type": "number",
+          "unit": "% or °",
+          "required": true
+        },
+        {
+          "key": "indication_g",
+          "label": "Indication",
+          "type": "mass",
+          "required": true
+        }
       ],
-      "tolerance": {"kind": "MPE", "compare": "Ec"}
+      "tolerance": {
+        "kind": "MPE",
+        "compare": "Ec"
+      }
     },
     {
       "no": 10,
@@ -256,23 +484,55 @@
       "clause_r76_1": "A.4.6 (3.5.3.3, 3.5.3.4, 4.6.3)",
       "clause_r76_2_section": 9,
       "applies_to": "with_tare_device",
-      "engine": "implemented",
+      "engine": "catalogued",
       "summary": "Verify the accuracy of tare setting, the weighing performance with tare applied, and the tare weighing device.",
       "variants": {
-        "weighing_with_tare": {"clause": "A.4.6.1 (3.5.3.3)",
-          "rule": "The mpe applies to the net value for every possible tare load, except preset tare values."},
-        "accuracy_of_tare_setting": {"clause": "A.4.6.2 (4.6.3)",
-          "tolerance": {"kind": "ABSOLUTE_E", "limit_e": 0.25}},
-        "tare_weighing_device": {"clause": "A.4.6.3 (3.5.3.4, 3.6.3)",
-          "rule": "The mpe for a tare weighing device is the same, for any tare value, as that of the instrument for the same load."}
+        "weighing_with_tare": {
+          "clause": "A.4.6.1 (3.5.3.3)",
+          "rule": "The mpe applies to the net value for every possible tare load, except preset tare values."
+        },
+        "accuracy_of_tare_setting": {
+          "clause": "A.4.6.2 (4.6.3)",
+          "tolerance": {
+            "kind": "ABSOLUTE_E",
+            "limit_e": 0.25
+          }
+        },
+        "tare_weighing_device": {
+          "clause": "A.4.6.3 (3.5.3.4, 3.6.3)",
+          "rule": "The mpe for a tare weighing device is the same, for any tare value, as that of the instrument for the same load."
+        }
       },
       "inputs": [
-        {"key": "tare_g", "label": "Tare load T", "type": "mass", "required": true},
-        {"key": "net_load_g", "label": "Net load", "type": "mass", "required": true},
-        {"key": "indication_g", "label": "Net indication", "type": "mass", "required": true},
-        {"key": "delta_load_g", "label": "Additional weights ΔL", "type": "mass", "required": false}
+        {
+          "key": "tare_g",
+          "label": "Tare load T",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "net_load_g",
+          "label": "Net load",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "indication_g",
+          "label": "Net indication",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "delta_load_g",
+          "label": "Additional weights ΔL",
+          "type": "mass",
+          "required": false
+        }
       ],
-      "tolerance": {"kind": "MPE", "compare": "Ec"}
+      "tolerance": {
+        "kind": "MPE",
+        "compare": "Ec"
+      }
     },
     {
       "no": 11,
@@ -281,19 +541,50 @@
       "clause_r76_1": "A.5.2 (5.3.5)",
       "clause_r76_2_section": 10,
       "applies_to": "electronic",
-      "engine": "implemented",
+      "engine": "catalogued",
       "summary": "After at least 8 hours disconnected, switch on, set to zero and determine the error at zero and near Max at intervals.",
-      "read_points_minutes": [0, 5, 15, 30],
-      "load_points": {"strategy": "fixed", "loads": ["zero", "close_to_max"]},
-      "inputs": [
-        {"key": "elapsed_minutes", "label": "Minutes after switch-on", "type": "number", "required": true},
-        {"key": "zero_error_g", "label": "Error at zero", "type": "mass", "required": true},
-        {"key": "indication_g", "label": "Indication near Max", "type": "mass", "required": true}
+      "read_points_minutes": [
+        0,
+        5,
+        15,
+        30
       ],
-      "tolerance": {"kind": "MPE", "compare": "Ec",
-        "rule": "Every measurement after 5, 15 and 30 minutes shall be corrected for the zero error at that time and shall be within the mpe."},
-      "notes": ["Disconnect from the supply for at least 8 hours before the test.",
-                "For class I instruments observe the operating manual's provisions for time after connection."]
+      "load_points": {
+        "strategy": "fixed",
+        "loads": [
+          "zero",
+          "close_to_max"
+        ]
+      },
+      "inputs": [
+        {
+          "key": "elapsed_minutes",
+          "label": "Minutes after switch-on",
+          "type": "number",
+          "required": true
+        },
+        {
+          "key": "zero_error_g",
+          "label": "Error at zero",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "indication_g",
+          "label": "Indication near Max",
+          "type": "mass",
+          "required": true
+        }
+      ],
+      "tolerance": {
+        "kind": "MPE",
+        "compare": "Ec",
+        "rule": "Every measurement after 5, 15 and 30 minutes shall be corrected for the zero error at that time and shall be within the mpe."
+      },
+      "notes": [
+        "Disconnect from the supply for at least 8 hours before the test.",
+        "For class I instruments observe the operating manual's provisions for time after connection."
+      ]
     },
     {
       "no": 12,
@@ -302,32 +593,77 @@
       "clause_r76_1": "A.5.4 (3.9.3)",
       "clause_r76_2_section": 11,
       "applies_to": "electronic",
-      "engine": "implemented",
+      "engine": "catalogued",
       "summary": "Subject the instrument to the voltage limits of its power supply and confirm all indications stay within the mpe.",
-      "load_points": {"strategy": "fixed", "loads": ["10 e", "between_half_max_and_max"]},
+      "load_points": {
+        "strategy": "fixed",
+        "loads": [
+          "10 e",
+          "between_half_max_and_max"
+        ]
+      },
       "variants": {
-        "ac_mains": {"clause": "A.5.4.1",
-          "lower": "0.85 Unom or 0.85 Umin", "upper": "1.10 Unom or 1.10 Umax",
+        "ac_mains": {
+          "clause": "A.5.4.1",
+          "lower": "0.85 Unom or 0.85 Umin",
+          "upper": "1.10 Unom or 1.10 Umax",
           "allowable": "All functions shall operate as designed. All indications within the mpe.",
-          "note": "For a three-phase supply the variations apply to each phase successively."},
-        "external_or_plugin": {"clause": "A.5.4.2",
-          "lower": "minimum operating voltage (3.9.3)", "upper": "1.20 Unom or 1.20 Umax",
-          "allowable": "All functions operate as designed or the indication switches off. All indications within the mpe."},
-        "non_rechargeable_battery": {"clause": "A.5.4.3",
-          "lower": "minimum operating voltage (3.9.3)", "upper": "Unom or Umax",
-          "allowable": "All functions operate as designed or the indication switches off. All indications within the mpe."},
-        "road_vehicle_battery": {"clause": "A.5.4.4",
+          "note": "For a three-phase supply the variations apply to each phase successively."
+        },
+        "external_or_plugin": {
+          "clause": "A.5.4.2",
           "lower": "minimum operating voltage (3.9.3)",
-          "upper": "16 V for a 12 V battery; see A.5.4.4 for 24 V"}
+          "upper": "1.20 Unom or 1.20 Umax",
+          "allowable": "All functions operate as designed or the indication switches off. All indications within the mpe."
+        },
+        "non_rechargeable_battery": {
+          "clause": "A.5.4.3",
+          "lower": "minimum operating voltage (3.9.3)",
+          "upper": "Unom or Umax",
+          "allowable": "All functions operate as designed or the indication switches off. All indications within the mpe."
+        },
+        "road_vehicle_battery": {
+          "clause": "A.5.4.4",
+          "lower": "minimum operating voltage (3.9.3)",
+          "upper": "16 V for a 12 V battery; see A.5.4.4 for 24 V"
+        }
       },
       "inputs": [
-        {"key": "supply_variant", "label": "Supply type", "type": "enum",
-         "options": ["AC mains", "External or plug-in", "Non-rechargeable battery", "Road vehicle battery"]},
-        {"key": "voltage_v", "label": "Applied voltage", "type": "number", "unit": "V", "required": true},
-        {"key": "load_g", "label": "Test load", "type": "mass", "required": true},
-        {"key": "indication_g", "label": "Indication", "type": "mass", "required": true}
+        {
+          "key": "supply_variant",
+          "label": "Supply type",
+          "type": "enum",
+          "options": [
+            "AC mains",
+            "External or plug-in",
+            "Non-rechargeable battery",
+            "Road vehicle battery"
+          ]
+        },
+        {
+          "key": "voltage_v",
+          "label": "Applied voltage",
+          "type": "number",
+          "unit": "V",
+          "required": true
+        },
+        {
+          "key": "load_g",
+          "label": "Test load",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "indication_g",
+          "label": "Indication",
+          "type": "mass",
+          "required": true
+        }
       ],
-      "tolerance": {"kind": "MPE", "compare": "Ec"}
+      "tolerance": {
+        "kind": "MPE",
+        "compare": "Ec"
+      }
     },
     {
       "no": 13,
@@ -339,7 +675,10 @@
       "engine": "implemented",
       "summary": "Expose the instrument to electromagnetic disturbances and confirm no significant fault occurs.",
       "subtests_ref": "influence-tests.json",
-      "tolerance": {"kind": "SIGNIFICANT_FAULT", "limit_e": 1.0}
+      "tolerance": {
+        "kind": "SIGNIFICANT_FAULT",
+        "limit_e": 1.0
+      }
     },
     {
       "no": 14,
@@ -349,17 +688,35 @@
       "clause_r76_2_section": 13,
       "applies_to": "electronic",
       "not_applicable_to": "Class I instruments, and class II instruments where e < 1 g.",
-      "engine": "implemented",
+      "engine": "catalogued",
       "summary": "Expose to constant temperature and relative humidity and repeat the weighing test at each stage.",
       "stages": [
-        {"label": "Reference, conditioned", "temperature": "20 °C or the mean of the range", "rh_percent": 50},
-        {"label": "High temperature, 2 days after stabilisation", "temperature": "high limit of 3.9.2", "rh_percent": 85},
-        {"label": "Return to reference", "temperature": "20 °C or the mean of the range", "rh_percent": 50}
+        {
+          "label": "Reference, conditioned",
+          "temperature": "20 °C or the mean of the range",
+          "rh_percent": 50
+        },
+        {
+          "label": "High temperature, 2 days after stabilisation",
+          "temperature": "high limit of 3.9.2",
+          "rh_percent": 85
+        },
+        {
+          "label": "Return to reference",
+          "temperature": "20 °C or the mean of the range",
+          "rh_percent": 50
+        }
       ],
-      "load_points": {"strategy": "derived", "minimum_loads": 5,
-                      "help": "At least five different test loads, or simulated loads."},
-      "tolerance": {"kind": "MPE", "compare": "Ec",
-        "rule": "All functions shall operate as designed and all indications shall be within the mpe."}
+      "load_points": {
+        "strategy": "derived",
+        "minimum_loads": 5,
+        "help": "At least five different test loads, or simulated loads."
+      },
+      "tolerance": {
+        "kind": "MPE",
+        "compare": "Ec",
+        "rule": "All functions shall operate as designed and all indications shall be within the mpe."
+      }
     },
     {
       "no": 15,
@@ -369,25 +726,66 @@
       "clause_r76_2_section": 14,
       "applies_to": "electronic",
       "not_applicable_to": "Class I instruments.",
-      "engine": "implemented",
+      "engine": "catalogued",
       "summary": "Observe the variation of error at a load near Max over an extended period spanning the other performance tests.",
       "duration_days": 28,
       "duration_rule": "28 days or the period necessary for the performance tests, whichever is shorter.",
       "interval_rule": "Between ½ day and 10 days, fairly evenly distributed.",
       "min_measurements": 8,
-      "load_points": {"strategy": "fixed", "loads": ["near_max"],
-                      "help": "The same test weights shall be used throughout."},
-      "power_disconnections": {"count": 2, "min_hours": 8},
+      "load_points": {
+        "strategy": "fixed",
+        "loads": [
+          "near_max"
+        ],
+        "help": "The same test weights shall be used throughout."
+      },
+      "power_disconnections": {
+        "count": 2,
+        "min_hours": 8
+      },
       "stabilisation": "At least 5 hours after switch-on, and at least 16 hours after the temperature and damp heat tests.",
       "inputs": [
-        {"key": "measurement_no", "label": "Measurement", "type": "number", "required": true},
-        {"key": "measured_at", "label": "Date and time", "type": "datetime", "required": true},
-        {"key": "load_g", "label": "Test load", "type": "mass", "required": true},
-        {"key": "indication_g", "label": "Indication", "type": "mass", "required": true},
-        {"key": "temperature_c", "label": "Temperature", "type": "number", "unit": "°C"},
-        {"key": "rh_percent", "label": "Relative humidity", "type": "number", "unit": "%"}
+        {
+          "key": "measurement_no",
+          "label": "Measurement",
+          "type": "number",
+          "required": true
+        },
+        {
+          "key": "measured_at",
+          "label": "Date and time",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "key": "load_g",
+          "label": "Test load",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "indication_g",
+          "label": "Indication",
+          "type": "mass",
+          "required": true
+        },
+        {
+          "key": "temperature_c",
+          "label": "Temperature",
+          "type": "number",
+          "unit": "°C"
+        },
+        {
+          "key": "rh_percent",
+          "label": "Relative humidity",
+          "type": "number",
+          "unit": "%"
+        }
       ],
-      "tolerance": {"kind": "MPE", "compare": "Ec"}
+      "tolerance": {
+        "kind": "MPE",
+        "compare": "Ec"
+      }
     },
     {
       "no": 16,
@@ -396,7 +794,7 @@
       "clause_r76_1": "A.6 (3.9.4.3)",
       "clause_r76_2_section": 15,
       "applies_to": "classes_II_III_IIII_max_le_100kg",
-      "engine": "implemented",
+      "engine": "catalogued",
       "summary": "Apply and remove a load of about 50 % of Max 100 000 times, with a weighing test before and after.",
       "cycles": 100000,
       "load_fraction": 0.5,
@@ -405,9 +803,14 @@
         "100 000 loading and unloading cycles at about 50 % of Max.",
         "Weighing test per A.4.4.1 after completion, to determine the durability error due to wear and tear."
       ],
-      "tolerance": {"kind": "MPE", "compare": "Ec"},
-      "notes": ["The endurance test shall be performed after all other tests.",
-                "The force applied shall not exceed that attained in a normal loading operation."]
+      "tolerance": {
+        "kind": "MPE",
+        "compare": "Ec"
+      },
+      "notes": [
+        "The endurance test shall be performed after all other tests.",
+        "The force applied shall not exceed that attained in a normal loading operation."
+      ]
     },
     {
       "no": 17,
@@ -419,13 +822,30 @@
       "engine": "checklist",
       "summary": "Compare the construction with the documentation, and examine metrological characteristics, descriptive markings, stamping and securing.",
       "checklist": [
-        {"item": "Construction agrees with the submitted documentation", "clause": "A.2 (8.2.2)"},
-        {"item": "Metrological characteristics as declared", "clause": "A.3.1"},
-        {"item": "Descriptive markings present, legible and indelible", "clause": "A.3.2 (7.1)"},
-        {"item": "Stamping and securing provisions adequate", "clause": "A.3.3 (4.1.2.4, 7.2)"},
-        {"item": "Administrative examination of the application complete", "clause": "A.1 (8.2.1)"}
+        {
+          "item": "Construction agrees with the submitted documentation",
+          "clause": "A.2 (8.2.2)"
+        },
+        {
+          "item": "Metrological characteristics as declared",
+          "clause": "A.3.1"
+        },
+        {
+          "item": "Descriptive markings present, legible and indelible",
+          "clause": "A.3.2 (7.1)"
+        },
+        {
+          "item": "Stamping and securing provisions adequate",
+          "clause": "A.3.3 (4.1.2.4, 7.2)"
+        },
+        {
+          "item": "Administrative examination of the application complete",
+          "clause": "A.1 (8.2.1)"
+        }
       ],
-      "tolerance": {"kind": "FUNCTIONAL"}
+      "tolerance": {
+        "kind": "FUNCTIONAL"
+      }
     },
     {
       "no": 18,
@@ -437,7 +857,9 @@
       "engine": "checklist",
       "summary": "Clause-by-clause confirmation of technical and metrological compliance, including software requirements.",
       "subtests_ref": "software-checklist.json",
-      "tolerance": {"kind": "FUNCTIONAL"}
+      "tolerance": {
+        "kind": "FUNCTIONAL"
+      }
     }
   ],
   "applicability_predicates": {
@@ -448,5 +870,6 @@
     "with_tare_device": "instrument.has_tare_device",
     "classes_II_III_IIII": "instrument.accuracy_class in ('II','III','IIII')",
     "classes_II_III_IIII_max_le_100kg": "instrument.accuracy_class in ('II','III','IIII') and instrument.max_capacity_g <= 100000"
-  }
+  },
+  "_engine_status_note": "'implemented' means the test is computed by engine/nawi_engine.py or backend/recompute.py AND rendered in the report. 'catalogued' means the test is defined here with its clause and tolerance but no code computes it yet; it appears in the report's summary as NOT COVERED. This field previously claimed 'implemented' for 13 tests when 5 were implemented."
 }

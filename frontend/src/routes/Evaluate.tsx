@@ -1,14 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
-  evaluateObservations, mpeForLoad, mpeBandLabel, suggestTestLoads,
-  validateInstrument, checkRepeatability, classSymbol, n as nOf,
+  evaluateObservations, mpeForLoad, suggestTestLoads,
+  validateInstrument, classSymbol, n as nOf,
   derivedMinCapacityG, type Instrument, type Observation,
 } from "@engine/nawi-engine";
 import { fetchEvaluation, fetchObservations, type Me } from "../lib/supabase";
 import { captureObservation, cacheEvaluation } from "../lib/offline";
 import { renderReport, verifyEvaluation, type VerifyResult } from "../lib/space";
 import StatusBar from "../components/StatusBar";
+import TestCapture, { type CaptureRow } from "../components/TestCapture";
+import {
+  recompute as recomputeAll, TEST_TITLES,
+  type StoredObservation,
+} from "@engine/nawi-recompute";
 import { isEditable } from "../lib/workflow";
 
 const DEMO: Instrument = {
@@ -29,6 +34,10 @@ export default function Evaluate({ me }: { me: Me }) {
   const [inst, setInst] = useState<Instrument>(DEMO);
   const [evaluationId, setEvaluationId] = useState<string | null>(null);
   const [status, setStatusLocal] = useState<string>("draft");
+  // Every observation, all five tests. The weighing rows below are the
+  // editable view; these are what the overall verdict is folded from, so
+  // the banner cannot disagree with the rendered report.
+  const [allObs, setAllObs] = useState<StoredObservation[]>([]);
   const [zeroError, setZeroError] = useState(0);
   const [rows, setRows] = useState<Row[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
@@ -59,6 +68,7 @@ export default function Evaluate({ me }: { me: Me }) {
           jurisdiction: ev.jurisdiction,
         });
         const obs = await fetchObservations(ev.id);
+        setAllObs(obs as StoredObservation[]);
         setRows(
           obs
             .filter((o: any) => o.test_code === "weighing_performance")
@@ -117,11 +127,33 @@ export default function Evaluate({ me }: { me: Me }) {
   }, [inst, rows, zeroError, specOk]);
 
   const done = evaluated.filter((o) => !o.pending);
-  const overall = !specOk || done.some((o) => o.verdict === "FAIL")
-    ? "FAIL"
-    : done.length === evaluated.length && evaluated.length > 0
-      ? "PASS"
-      : "PENDING";
+
+  /**
+   * The verdict for the whole instrument, folded from all five tests exactly
+   * as backend/recompute.py folds it.
+   *
+   * The weighing rows are taken from what is on screen rather than from the
+   * database, so the banner moves as the technician types; every other test
+   * comes from the stored observations. Before this, the banner was computed
+   * from the weighing rows alone and announced CONFORMS on reports whose
+   * eccentricity had failed -- 34 of the 120 seed evaluations.
+   */
+  const full = useMemo(() => {
+    const live: StoredObservation[] = rows.map((r) => ({
+      test_code: "weighing_performance",
+      load_g: r.loadG,
+      indication_g: r.indicationG,
+      delta_load_g: r.deltaLoadG,
+      direction: r.direction,
+    }));
+    const others = allObs.filter((o) => o.test_code !== "weighing_performance");
+    return recomputeAll(inst, [...live, ...others], zeroError);
+  }, [inst, rows, allObs, zeroError]);
+
+  const overall = specOk ? full.verdict : "FAIL";
+
+  /** A stored record past draft is append-only; the database refuses writes. */
+  const frozen = !!ref && !isEditable(status);
 
   function edit(i: number, field: "indText" | "dlText", value: string) {
     setRows((prev) => {
@@ -199,7 +231,7 @@ export default function Evaluate({ me }: { me: Me }) {
   return (
     <div className="cols">
       <div className="stack">
-        <Spec inst={inst} setInst={setInst} />
+        <Spec inst={inst} setInst={setInst} locked={!!ref} />
         <Derived inst={inst} findings={findings} fmt={fmt} />
         {ref && (
           <StatusBar
@@ -218,9 +250,31 @@ export default function Evaluate({ me }: { me: Me }) {
               : overall === "FAIL" ? "DOES NOT CONFORM" : "IN PROGRESS"}
           </div>
           <div className="d">
-            {overall === "FAIL" && !specOk
+            {!specOk
               ? "The declared specification does not satisfy the standard."
-              : `${done.length} of ${evaluated.length} weighing observations recorded.`}
+              : full.failing.length > 0
+                ? `Failing: ${full.failing.map((k) => TEST_TITLES[k] ?? k).join(", ")}.`
+                : full.pending.length > 0
+                  ? `Not yet recorded: ${full.pending
+                      .map((k) => TEST_TITLES[k] ?? k)
+                      .join(", ")}.`
+                  : `All five tests recorded and within permissible error.`}
+          </div>
+        </div>
+
+        <div className="panel">
+          <div className="hd">
+            <span>Tests</span>
+            <span className="cl">{done.length} of {evaluated.length} weighing rows recorded</span>
+          </div>
+          <div className="legend">
+            {Object.entries(full.tests).map(([code, t]) => (
+              <span key={code} title={`Clause ${t.clause}`}>
+                <span className={`tag ${t.verdict}`}>{t.verdict}</span>{" "}
+                {TEST_TITLES[code] ?? code}
+                {t.count > 0 && <span className="note"> · {t.count}</span>}
+              </span>
+            ))}
           </div>
         </div>
 
@@ -234,7 +288,7 @@ export default function Evaluate({ me }: { me: Me }) {
             <div className="field" style={{ maxWidth: 200 }}>
               <label htmlFor="e0">Zero error E₀ ({inst.eG >= 1 ? "kg" : "g"})</label>
               <input
-                id="e0" type="number" step="any"
+                id="e0" type="number" step="any" disabled={frozen}
                 value={inst.eG >= 1 ? zeroError / 1000 : zeroError}
                 onChange={(e) =>
                   setZeroError(inst.eG >= 1 ? Number(e.target.value) * 1000 : Number(e.target.value))
@@ -264,11 +318,13 @@ export default function Evaluate({ me }: { me: Me }) {
                       <td className="note">{o.direction}</td>
                       <td>
                         <input type="number" step="any" value={rows[i]?.indText ?? ""}
+                          disabled={frozen}
                           aria-label={`Indication at ${fmt(o.loadG)}`}
                           onChange={(e) => edit(i, "indText", e.target.value)} />
                       </td>
                       <td>
                         <input type="number" step="any" value={rows[i]?.dlText ?? ""}
+                          disabled={frozen}
                           aria-label="Additional weights"
                           onChange={(e) => edit(i, "dlText", e.target.value)} />
                       </td>
@@ -293,9 +349,9 @@ export default function Evaluate({ me }: { me: Me }) {
           <div className="bar">
             <button
               className="btn"
-              disabled={!!busy || (!!ref && !isEditable(status))}
+              disabled={!!busy || frozen}
               title={
-                !!ref && !isEditable(status)
+                frozen
                   ? `A record at "${status}" is frozen. Return it to draft to record more.`
                   : undefined
               }
@@ -314,12 +370,34 @@ export default function Evaluate({ me }: { me: Me }) {
               {busy === "rendering" ? "Rendering…" : "Render report"}
             </button>
             <span className="note sp">
-              {!!ref && !isEditable(status)
+              {frozen
                 ? "This record is frozen at its current status. Observations are append-only and the database refuses edits."
                 : "Loads include Min, Max and every load at which the permissible error changes."}
             </span>
           </div>
         </div>
+
+        {ref && (
+          <TestCapture
+            inst={inst}
+            zeroError={zeroError}
+            frozen={frozen}
+            existing={new Set(allObs.map((o) => o.test_code))}
+            onRecord={async (captured: CaptureRow[]) => {
+              if (!evaluationId) throw new Error("No evaluation open.");
+              for (const row of captured) {
+                await captureObservation(evaluationId, ref, {
+                  evaluation_id: evaluationId,
+                  ...row,
+                });
+              }
+              // Fold them in immediately: the verdict banner is computed from
+              // this list, so a recorded eccentricity failure must show up
+              // without waiting for a reload.
+              setAllObs((prev) => [...prev, ...(captured as StoredObservation[])]);
+            }}
+          />
+        )}
 
         {message && <div className="panel"><div className="pad note">{message}</div></div>}
         {verify && <Divergence verify={verify} />}
@@ -334,28 +412,53 @@ function decimals(step: number) {
   return d;
 }
 
-function Spec({ inst, setInst }: { inst: Instrument; setInst: (i: Instrument) => void }) {
+/**
+ * The declared specification.
+ *
+ * Read-only once an evaluation is open. The fields used to be editable on a
+ * stored evaluation, but nothing wrote them back: a technician could correct
+ * Max, watch every verdict on screen recompute against the new value, record
+ * observations against it -- and the database, and therefore the rendered
+ * report, still held the old one. Silently showing one number and printing
+ * another is the worst failure this screen could have.
+ *
+ * The specification belongs to the instrument model, which is shared by every
+ * evaluation of that model, so it is not an evaluation-level edit in any case.
+ * Editing stays available on the unsaved scratch view, where nothing is
+ * claimed to be stored.
+ */
+function Spec({
+  inst, setInst, locked,
+}: { inst: Instrument; setInst: (i: Instrument) => void; locked: boolean }) {
   const unit = inst.eG >= 1 ? "kg" : "g";
   const toG = (v: number) => (unit === "kg" ? v * 1000 : v);
   const fromG = (v: number) => (unit === "kg" ? v / 1000 : v);
   return (
     <div className="panel">
       <header><h2>Instrument</h2><span className="cl">3.2 / Table 3</span></header>
+      {locked && (
+        <div className="pad" style={{ paddingBottom: 0 }}>
+          <p className="note">
+            Declared by the manufacturer and held against the instrument model.
+            Shown here as recorded; it is not editable from a test record.
+          </p>
+        </div>
+      )}
       <div className="pad">
         <div className="field">
           <label htmlFor="mfr">Manufacturer</label>
-          <input id="mfr" value={inst.manufacturer}
+          <input id="mfr" disabled={locked} value={inst.manufacturer}
             onChange={(e) => setInst({ ...inst, manufacturer: e.target.value })} />
         </div>
         <div className="row">
           <div className="field">
             <label htmlFor="model">Model</label>
-            <input id="model" value={inst.model}
+            <input id="model" disabled={locked} value={inst.model}
               onChange={(e) => setInst({ ...inst, model: e.target.value })} />
           </div>
           <div className="field">
             <label htmlFor="cls">Accuracy class</label>
-            <select id="cls" value={inst.accuracyClass}
+            <select id="cls" disabled={locked} value={inst.accuracyClass}
               onChange={(e) => setInst({ ...inst, accuracyClass: e.target.value as any })}>
               {["I", "II", "III", "IIII"].map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
@@ -364,12 +467,12 @@ function Spec({ inst, setInst }: { inst: Instrument; setInst: (i: Instrument) =>
         <div className="row">
           <div className="field">
             <label htmlFor="max">Max ({unit})</label>
-            <input id="max" type="number" step="any" value={fromG(inst.maxCapacityG)}
+            <input id="max" disabled={locked} type="number" step="any" value={fromG(inst.maxCapacityG)}
               onChange={(e) => setInst({ ...inst, maxCapacityG: toG(Number(e.target.value)) })} />
           </div>
           <div className="field">
             <label htmlFor="e">e ({unit})</label>
-            <input id="e" type="number" step="any" value={fromG(inst.eG)}
+            <input id="e" disabled={locked} type="number" step="any" value={fromG(inst.eG)}
               onChange={(e) => {
                 const v = toG(Number(e.target.value));
                 setInst({ ...inst, eG: v, dG: v, minCapacityG: undefined });
@@ -378,7 +481,7 @@ function Spec({ inst, setInst }: { inst: Instrument; setInst: (i: Instrument) =>
         </div>
         <div className="field" style={{ marginBottom: 0 }}>
           <label htmlFor="juris">Report to</label>
-          <select id="juris" value={inst.jurisdiction ?? "IN"}
+          <select id="juris" disabled={locked} value={inst.jurisdiction ?? "IN"}
             onChange={(e) => setInst({ ...inst, jurisdiction: e.target.value as any })}>
             <option value="IN">India — Legal Metrology</option>
             <option value="OIML">OIML</option>

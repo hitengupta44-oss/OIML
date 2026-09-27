@@ -10,7 +10,8 @@ test reports.
 
 ```
 standards/    the rules as versioned data — the heart of the project
-engine/       nawi_engine.py (backend) + nawi-engine.ts (frontend), same JSON
+engine/       nawi_engine.py + nawi-engine.ts, same JSON; recompute twins too
+sources/      the published documents the code cites
 
 supabase/     STAGE 1 — database, auth, roles, row-level security
 backend/      STAGE 2 — Hugging Face Space (Docker + FastAPI): DOCX/PDF + recompute
@@ -45,12 +46,19 @@ docs/         extraction manifest, calculation methodology
 ## Quick start
 
 ```bash
-cd engine && python3 test_harness.py      # 31 known-answer tests
-cd ../seed && python3 generate.py --seed 26035 --evaluations 120
-cd ../backend && python3 test_local.py    # renders real DOCX + PDF
-python3 scripts/smoke_test.py             # end to end, once deployed
-python3 scripts/validate_sql.py           # PostgreSQL's own parser
+python3 engine/test_harness.py                 # 31 known-answer, Ishida MS-5060S
+python3 engine/test_nitp_b2.py                 # 22 known-answer, NMI worked example
+python3 engine/test_parity.py                  # TS and Python agree, 665 verdicts
+python3 scripts/check_workflow_consistency.py  # workflow.json == the database
+python3 scripts/check_coverage.py              # metadata == what the code does
+python3 scripts/validate_sql.py                # PostgreSQL's own parser
+cd backend && python3 test_local.py            # renders real DOCX + PDF
+cd frontend && npm run build && npm run check:secrets
 ```
+
+Every one of those has been checked for teeth: a deliberate defect was
+injected into each and confirmed to fail it. A check that has never failed has
+not been tested.
 
 The seed is fixed: a given seed always produces a byte-identical dataset, so
 regression tests and demos are reproducible rather than a coin flip.
@@ -114,11 +122,38 @@ R 76-2 section numbers, which drives the dual-compliance footer on the report.
 
 ## Known-answer validation
 
-The engine is anchored to a real published approval: the Ishida MS-5060S, NMI
-Certificate 6/4C/86, Max 60 kg, e = 0.02 kg. The engine derives n = 3000,
-class III, Min = 0.4 kg, and mpe stepping 10 → 20 → 30 g at the correct loads.
+Two independent anchors, both published by regulators.
 
-Matching a regulator's published figures is the correctness argument.
+**The Ishida MS-5060S**, NMI Certificate 6/4C/86, Max 60 kg, e = 0.02 kg. The
+engine derives n = 3000, class III, Min = 0.4 kg, and mpe stepping
+10 → 20 → 30 g at the correct loads.
+
+**NITP 6.1 to 6.4 Appendix B.2**, a complete worked substitution-load test on a
+class 3 weighbridge with every number printed. The engine reproduces all of it,
+including the formulas `E = I + 0.5e − ΔL − L` and `L_sub = I_sub + 0.5e − E`
+that the NMI states in the same form this project uses. See `sources/README.md`
+for why its 10 t row settles the band-edge question.
+
+Matching a regulator's published figures is the correctness argument. Matching
+two regulators is a better one.
+
+## Two engines, one answer
+
+The browser decides verdicts so a technician inside a shielded chamber keeps
+working with no network; the service decides what the signed PDF says. Reading
+the same JSON keeps the *values* in one place, but it does not make two
+implementations compute the same answer — and for a while they did not. The
+browser folded its headline verdict from the weighing observations alone while
+the service folded in all five tests, so 34 of the 120 seed evaluations showed
+CONFORMS on screen and DOES NOT CONFORM in the report.
+
+`engine/nawi-recompute.ts` is now the twin of `backend/recompute.py`, and
+`engine/test_parity.py` runs both over 133 evaluations comparing 665 per-test
+verdicts. Thirteen of those evaluations are constructed to sit exactly on each
+shared limit, because the realistic seed data never approached some of them:
+its creep deviations are either well under 0.25 e or over 0.9 e, so a creep
+limit wrongly set anywhere between the two passed every seed case in both
+languages. A limit is only tested by a value that straddles it.
 
 ---
 
@@ -154,9 +189,37 @@ into evidence of judgement.
 
 ---
 
+## Scope, stated plainly
+
+The report carries all 17 numbered sections of the R 76-2 form, read from
+`standards/report-layout.json`. **Five of them are computed and tabulated**:
+weighing performance, repeatability, eccentricity, time-dependence and
+electrical disturbances. The other twelve print a line saying the test was not
+carried out, and the summary table marks them NOT COVERED — so the scope of a
+report is stated in the report rather than inferred from what is missing, and
+the section numbering matches the published form.
+
+**Three of the five can be entered through the app** (weighing, eccentricity,
+repeatability). Creep and disturbances are computed and printed but arrive only
+through the seed.
+
+`scripts/check_coverage.py` fails the build if any of those counts drift from
+what `test-catalogue.json` claims. The catalogue used to mark thirteen tests
+"implemented" when five were.
+
 ## Still missing
 
-A filled-in RRSL test report with real observation numbers. The Department
-publishes certificates (the outcome), never test reports (the working). Mentor
-or manufacturer request only — one PDF would confirm the template matches
-Indian practice exactly.
+**A filled-in RRSL test report with real observation numbers.** The Department
+publishes certificates (the outcome) — three are in `sources/certificates/` —
+but never test reports (the working). Mentor or manufacturer request only; one
+PDF would confirm the template matches Indian practice exactly.
+
+**Reachable from the database but not from the app:** attachment upload,
+report version history, the audit log, creating an evaluation from scratch, and
+correcting an observation. Each has its table, its RLS policies and in most
+cases its trigger; none has a screen.
+
+**The certificate of approval itself.** `approval_mark`, `certificate_no` and
+`gazette_date` are in the schema, the nine Rule 11(1) fields are in
+`workflow.json`, and three exemplars are now in `sources/`. Generating one from
+an issued report is the natural next deliverable.

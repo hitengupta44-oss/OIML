@@ -130,6 +130,14 @@ export async function insertObservations(rows: Record<string, unknown>[]) {
  * Corrections never overwrite. A new row is inserted and the old one is
  * pointed at it; the trigger in 0002_functions.sql rejects any attempt to
  * change a reading in place.
+ *
+ * NOT YET REACHABLE FROM THE UI. The database enforces append-only and this
+ * is the client half of the correction path, but no screen calls it: a
+ * technician who mistypes a reading currently has no way to correct it
+ * through the app. Wiring this is the next piece of observation capture.
+ * Note that fetchObservations filters superseded rows out, so a corrected
+ * reading disappears from view -- a correction UI needs a way to show the
+ * original alongside its replacement, which is the point of keeping it.
  */
 export async function supersedeObservation(
   oldId: number,

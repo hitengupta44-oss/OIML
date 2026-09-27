@@ -356,6 +356,12 @@ def check_repeatability(inst: Instrument, indications_g: List[float],
     }
 
 
+# NOTE: backend/recompute.py does not call this. A.4.7 judges each position
+# against the mpe for that load, which is exactly what evaluate_observations
+# already does, so recompute.py calls that and folds the verdicts itself.
+# This helper remains because it also reports worst_Ec_g, which the report
+# does not currently print. If it is ever wired up, delete the inline fold in
+# recompute.py rather than keeping two implementations of one clause.
 def check_eccentricity(inst: Instrument, observations: List[Observation],
                        zero_error_g: float = 0.0) -> dict:
     """A.4.7: each indication with the load off-centre shall be within the mpe

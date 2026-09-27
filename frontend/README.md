@@ -107,8 +107,28 @@ spreadsheet forgets.
 
 ## Not built yet
 
-- The remaining 13 tests from `test-catalogue.json` (weighing, repeatability,
-  eccentricity, creep and disturbances are wired)
-- Attachment upload to the typed slots in `workflow.json`
-- The status-transition UI — the database enforces the state machine already
+Stated as it is, because a stale list is worse than none.
+
+**Capture.** Only `weighing_performance` has an entry screen. Repeatability,
+eccentricity, creep and disturbances are computed by the engine and printed in
+the report, but their observations can only arrive through the seed — there is
+no UI to record them.
+
+**The report** covers 5 of the 18 tests in `test-catalogue.json`. The other 12
+numbered sections are emitted with a line saying the test was not carried out,
+so the section numbering matches the published form and the scope of the
+report is explicit. The summary table marks them NOT COVERED.
+
+**Missing entirely:**
+
+- Attachment upload to the typed slots in `workflow.json` — the table and its
+  RLS policies exist, no client touches them
+- Report version history and the audit log — both populated, neither viewable
+- Creating an evaluation from scratch; the app opens existing records only
+- Certificate of approval generation — `approval_mark`, `certificate_no` and
+  `gazette_date` are in the schema and Rule 11(1) fields are in `workflow.json`
 - Client-side PDF fallback for when the Space is asleep
+
+**Built since this list was first written:** the status-transition UI
+(`components/StatusBar.tsx`), driven by `standards/workflow.json` and enforced
+by the database.
