@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import {
   evaluateObservations, mpeForLoad, suggestTestLoads,
   validateInstrument, classSymbol, n as nOf,
+  displayUnit, toGrams, fromGrams,
   derivedMinCapacityG, type Instrument, type Observation,
 } from "@engine/nawi-engine";
 import { fetchEvaluation, fetchObservations, type Me } from "../lib/supabase";
@@ -69,6 +70,17 @@ export default function Evaluate({ me }: { me: Me }) {
         });
         const obs = await fetchObservations(ev.id);
         setAllObs(obs as StoredObservation[]);
+
+        // The text fields hold the display unit, the database holds grams.
+        // Derive the unit from the model just loaded rather than from the
+        // component's `unit`, which still describes the previous instrument
+        // at the moment this callback runs.
+        // Against the model just loaded, not the component's `inst`, which
+        // still describes the previous instrument at this point.
+        const loaded = { eG: Number(ev.model.e_g) } as any;
+        const text = (g: unknown) =>
+          fromGrams(loaded, g === null || g === undefined ? null : Number(g));
+
         setRows(
           obs
             .filter((o: any) => o.test_code === "weighing_performance")
@@ -78,8 +90,8 @@ export default function Evaluate({ me }: { me: Me }) {
               deltaLoadG: Number(o.delta_load_g ?? 0),
               direction: o.direction ?? "increasing",
               reason: "",
-              indText: o.indication_g === null ? "" : String(o.indication_g),
-              dlText: String(o.delta_load_g ?? ""),
+              indText: text(o.indication_g),
+              dlText: text(o.delta_load_g),
             }))
         );
       } catch (err) {
@@ -159,8 +171,8 @@ export default function Evaluate({ me }: { me: Me }) {
     setRows((prev) => {
       const next = [...prev];
       const r = { ...next[i], [field]: value };
-      r.indicationG = r.indText === "" ? null : Number(r.indText);
-      r.deltaLoadG = r.dlText === "" ? 0 : Number(r.dlText);
+      r.indicationG = toG(r.indText);
+      r.deltaLoadG = toG(r.dlText) ?? 0;
       next[i] = r;
       return next;
     });
@@ -221,6 +233,25 @@ export default function Evaluate({ me }: { me: Me }) {
       setBusy(null);
     }
   }
+
+  /**
+   * The unit every field on this screen is entered and shown in.
+   *
+   * An instrument whose e is a gram or more is worked in kilograms, matching
+   * how its display reads; a finer one is worked in grams. The engine stores
+   * grams throughout, so the two conversions below are the only place the
+   * boundary is crossed.
+   *
+   * They exist because the boundary used to be crossed inconsistently: the
+   * zero-error field converted, the indication and delta-load fields did not.
+   * On the Ishida (e = 20 g, so kilogram mode) a technician typing 21 for a
+   * 21 kg reading had it stored as 21 grams, and the verdict came back PASS
+   * on an error that was wrong by a factor of a thousand. A wrong verdict
+   * that looks plausible is the worst kind this screen can produce, so the
+   * unit is now written in every column heading as well.
+   */
+  const unit = displayUnit(inst);
+  const toG = (text: string) => toGrams(inst, text);
 
   const fmt = (g: number | undefined | null) => {
     if (g === null || g === undefined) return "—";
@@ -288,18 +319,18 @@ export default function Evaluate({ me }: { me: Me }) {
           <Envelope inst={inst} rows={evaluated} />
           <div className="pad" style={{ paddingTop: 0 }}>
             <div className="field" style={{ maxWidth: 200 }}>
-              <label htmlFor="e0">Zero error E₀ ({inst.eG >= 1 ? "kg" : "g"})</label>
+              <label htmlFor="e0">Zero error E₀ ({unit})</label>
               <input
                 id="e0" type="number" step="any" disabled={frozen}
-                value={inst.eG >= 1 ? zeroError / 1000 : zeroError}
+                value={unit === "kg" ? zeroError / 1000 : zeroError}
                 onChange={(e) =>
-                  setZeroError(inst.eG >= 1 ? Number(e.target.value) * 1000 : Number(e.target.value))
+                  setZeroError(unit === "kg" ? Number(e.target.value) * 1000 : Number(e.target.value))
                 }
               />
             </div>
             <p className="note" style={{ marginBottom: 10 }}>
               Enter the display reading as <code>I</code> and the additional{" "}
-              <code>e/10</code> weights added before it stepped up as <code>ΔL</code>.
+              <code>e/10</code> weights added before it stepped up as <code>ΔL</code>, both in {unit}.
               The corrected error is <code>Ec = (I + ½e − ΔL) − L − E₀</code>.
             </p>
             <div className="scroll">
@@ -307,7 +338,8 @@ export default function Evaluate({ me }: { me: Me }) {
                 <thead>
                   <tr>
                     <th>#</th><th className="n">Load L</th><th>Direction</th>
-                    <th className="n">Indication I</th><th className="n">ΔL</th>
+                    <th className="n">Indication I ({unit})</th>
+                    <th className="n">ΔL ({unit})</th>
                     <th className="n">Error Ec</th><th className="n">mpe</th>
                     <th>Result</th>
                   </tr>
