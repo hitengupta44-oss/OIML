@@ -263,10 +263,12 @@ export default function Evaluate({ me }: { me: Me }) {
         </div>
 
         <div className="panel">
-          <div className="hd">
-            <span>Tests</span>
-            <span className="cl">{done.length} of {evaluated.length} weighing rows recorded</span>
-          </div>
+          <header>
+            <h2>Tests</h2>
+            <span className="cl">
+              {done.length} of {evaluated.length} weighing rows recorded
+            </span>
+          </header>
           <div className="legend">
             {Object.entries(full.tests).map(([code, t]) => (
               <span key={code} title={`Clause ${t.clause}`}>
