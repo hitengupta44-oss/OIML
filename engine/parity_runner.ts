@@ -9,7 +9,9 @@
 
 import { readFileSync } from "node:fs";
 import { recompute } from "./nawi-recompute";
-import { displayUnit, toGrams, fromGrams } from "./nawi-engine";
+import {
+  displayUnit, toGrams, fromGrams, formatMass, formatError,
+} from "./nawi-engine";
 import type { Instrument } from "./nawi-engine";
 import type { StoredObservation } from "./nawi-recompute";
 
@@ -66,6 +68,35 @@ if (unitProblems.length) {
   process.stderr.write("unit conversion is wrong:\n");
   for (const p of unitProblems) process.stderr.write(`  ${p}\n`);
   process.exit(1);
+}
+
+/**
+ * How the two engines write a number.
+ *
+ * Verdicts agreeing is not enough: the screen and the report must also state
+ * the same value the same way. They did not. The report printed derived
+ * errors at e/10 while the screen rounded them to e, so on a scale with
+ * e = 0.01 kg a true error of -0.002 kg appeared on screen as "-0.00 kg",
+ * and a row sitting exactly on its limit was indistinguishable from one with
+ * room to spare. test_parity.py compares each line below against
+ * backend/render.py's own formatters.
+ */
+const FORMAT_CASES: [number, number][] = [
+  [10, -2], [10, 5], [10, 10], [10, 0], [10, 20000], [10, 200],
+  [20, -9], [20, 150], [20, 50], [0.1, 0.05], [0.1, 0.07], [500, 120],
+  [0.001, 0.0005], [1000, -2500],
+  // Ties, which the two languages round in opposite directions by default.
+  [1000, 2500], [1000, 1500], [1000, -1500], [2000, 5000],
+  // Four figures and up, where Python groups thousands and JavaScript does
+  // not. A bench scale reports grams, so these are routine, not exotic.
+  [0.5, -20982.8], [0.1, 31785.4], [0.005, 2983.6685], [10, 1234567],
+];
+for (const [eG, g] of FORMAT_CASES) {
+  const i = { eG, dG: eG, maxCapacityG: 60_000 } as Instrument;
+  process.stdout.write(JSON.stringify({
+    __format__: true, eG, g,
+    mass: formatMass(i, g), error: formatError(i, g),
+  }) + "\n");
 }
 
 const seedPath = process.argv[2];
