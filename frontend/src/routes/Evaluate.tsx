@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import {
   evaluateObservations, mpeForLoad, suggestTestLoads,
   validateInstrument, classSymbol, n as nOf,
-  displayUnit, toGrams, fromGrams,
+  displayUnit, toGrams, fromGrams, formatMass, formatError,
   derivedMinCapacityG, type Instrument, type Observation,
 } from "@engine/nawi-engine";
 import { fetchEvaluation, fetchObservations, type Me } from "../lib/supabase";
@@ -308,11 +308,11 @@ export default function Evaluate({ me }: { me: Me }) {
   const unit = displayUnit(inst);
   const toG = (text: string) => toGrams(inst, text);
 
-  const fmt = (g: number | undefined | null) => {
-    if (g === null || g === undefined) return "—";
-    return inst.eG >= 1 ? `${(g / 1000).toFixed(decimals(inst.eG / 1000))} kg`
-                        : `${g.toFixed(decimals(inst.eG))} g`;
-  };
+  // Loads and indications at e, derived errors at e/10 -- the same split the
+  // rendered report uses, so a number on screen and the same number in the
+  // PDF are written identically.
+  const fmt = (g: number | undefined | null) => formatMass(inst, g);
+  const efmt = (g: number | undefined | null) => formatError(inst, g);
 
   return (
     <div className="cols">
@@ -407,8 +407,8 @@ export default function Evaluate({ me }: { me: Me }) {
                           aria-label="Additional weights"
                           onChange={(e) => edit(i, "dlText", e.target.value)} />
                       </td>
-                      <td className="n">{o.pending ? "—" : fmt(o.Ec)}</td>
-                      <td className="n">{o.pending ? "—" : `± ${fmt(o.mpeG)}`}</td>
+                      <td className="n">{o.pending ? "—" : efmt(o.Ec)}</td>
+                      <td className="n">{o.pending ? "—" : `± ${efmt(o.mpeG)}`}</td>
                       <td>
                         <span className={`tag ${o.pending ? "PENDING" : o.marginal ? "MARGINAL" : o.verdict}`}>
                           {o.pending ? "—" : o.verdict}
