@@ -67,8 +67,17 @@ FAIL_RED = RGBColor(0xB3, 0x32, 0x1C)
 PASS_GREEN = RGBColor(0x0F, 0x6B, 0x4F)
 MARKER = re.compile(r"\[\[TABLE:(\w+)\]\]")
 
-# Tables at or under this many rows (header included) are held on one page.
-KEEP_TOGETHER_ROWS = 9
+# A table this short is held on one page whatever it contains: it is the
+# "Not recorded." placeholder, and splitting a header from its single row
+# says nothing and wastes a page boundary. Deliberately small -- an earlier
+# value of 9 held whole eight-row data tables back and left 4 cm of white at
+# the foot of the preceding page, which is worse than any split.
+KEEP_TOGETHER_ROWS = 3
+
+# A4 less the template's 1.8 cm margins. The per-table widths below are
+# proportions rather than absolutes: they are scaled to this so every table
+# reaches the right margin, whatever their author made them add up to.
+TEXT_WIDTH_CM = 21.0 - 2 * 1.8
 
 TEST_TITLES = {
     "weighing_performance": ("Weighing performance", "A.4.4.1, A.4.4.3"),
@@ -139,22 +148,22 @@ def table_specs(computed: Dict[str, Any], summary_rows: List[Dict[str, Any]],
     """Columns, rows and widths for every table in the report."""
     T = computed["tests"]
 
-    def spec(columns, rows, widths, verdict_col=None):
+    def spec(columns, rows, widths, verdict_col=None, keep_together=False):
         return {"columns": columns, "rows": rows, "widths": widths,
-                "verdict_col": verdict_col}
+                "verdict_col": verdict_col, "keep_together": keep_together}
 
     return {
         "specification": spec(
             ["Result", "Clause", "Code", "Finding"],
             [[f["level"], f["clause"], f["code"], f["message"]]
              for f in computed["specification"]["findings"]],
-            [1.8, 2.4, 3.4, 9.4], verdict_col=0),
+            [1.8, 2.4, 3.4, 9.4], verdict_col=0, keep_together=True),
 
         "summary": spec(
             ["No.", "Test", "Clause", "Observations", "Result"],
             [[r["no"], r["title"], r["clause"], r["count"], r["verdict"]]
              for r in summary_rows],
-            [1.2, 6.4, 3.0, 3.0, 3.4], verdict_col=4),
+            [1.2, 6.4, 3.0, 3.0, 3.4], verdict_col=4, keep_together=True),
 
         "weighing": spec(
             ["No.", "Load L", "Direction", "Indication I", "\u0394L", "P",
@@ -234,6 +243,25 @@ def _repeat_header(row):
     pr.append(el)
 
 
+def _set_grid(table, widths_cm):
+    """Write the column widths into w:tblGrid as well as into the cells.
+
+    Under a fixed layout the renderer lays columns out from tblGrid; the
+    per-cell w:tcW is only a hint. python-docx writes an equal split into
+    tblGrid at creation and never revises it, so cell widths alone leave every
+    column identical and wide text wraps where it should not.
+    """
+    grid = table._tbl.find(qn("w:tblGrid"))
+    if grid is None:
+        return
+    for col in list(grid):
+        grid.remove(col)
+    for cm in widths_cm:
+        col = OxmlElement("w:gridCol")
+        col.set(qn("w:w"), str(int(round(cm * 567))))   # twips: 1 cm = 567
+        grid.append(col)
+
+
 def _keep_with_next(paragraph):
     """Stop a heading or a header row being orphaned at the foot of a page."""
     paragraph.paragraph_format.keep_with_next = True
@@ -244,11 +272,18 @@ def _build_table(doc, spec: Dict[str, Any]):
     widths = spec.get("widths")
     verdict_col = spec.get("verdict_col")
 
+    if widths:
+        total = float(sum(widths))
+        if total > 0:
+            scale = TEXT_WIDTH_CM / total
+            widths = [w * scale for w in widths]
+
     t = doc.add_table(rows=1, cols=len(columns))
     t.style = "Table Grid"
     t.alignment = WD_TABLE_ALIGNMENT.LEFT
     if widths:
         t.autofit = False
+        _set_grid(t, widths)
 
     header = t.rows[0]
     _repeat_header(header)
@@ -295,13 +330,13 @@ def _build_table(doc, spec: Dict[str, Any]):
             if widths:
                 cells[k].width = Cm(widths[k])
 
-    # A short table has no business being split at all. Chaining keep-with-next
-    # down every row but the last makes the whole table move to the next page
-    # as a unit, which is why the five-row summary now arrives intact instead
-    # of leaving its last row stranded overleaf. Long tables -- weighing can
-    # run to forty rows -- must still break, so they are left alone: cantSplit
-    # and the repeating header handle those.
-    if len(t.rows) <= KEEP_TOGETHER_ROWS:
+    # Chaining keep-with-next down every row but the last moves the whole
+    # table to the next page as a unit. That is right for the summary -- a
+    # verdict table read at a glance must not be cut -- and for a placeholder
+    # of two rows. It is wrong for everything else: forcing a data table to
+    # move whole buys a clean table at the cost of a half-empty page, and
+    # cantSplit plus the repeating header already make a split safe to read.
+    if spec.get("keep_together") or len(t.rows) <= KEEP_TOGETHER_ROWS:
         for tr in t.rows[:-1]:
             for cell in tr.cells:
                 for p in cell.paragraphs:
