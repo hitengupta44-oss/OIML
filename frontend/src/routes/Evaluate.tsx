@@ -30,6 +30,19 @@ const DEMO: Instrument = {
 
 type Row = Observation & { reason: string; indText: string; dlText: string };
 
+/**
+ * Tests with an entry screen in this app. Weighing is the table below;
+ * eccentricity and repeatability are in TestCapture. Creep and electrical
+ * disturbances are computed by the engine and printed in the report, but
+ * their observations can only arrive through the seed or an import -- so the
+ * banner says so rather than implying a form exists.
+ */
+const CAPTURABLE = new Set([
+  "weighing_performance",
+  "eccentricity",
+  "repeatability",
+]);
+
 export default function Evaluate({ me }: { me: Me }) {
   const { ref } = useParams();
   const [inst, setInst] = useState<Instrument>(DEMO);
@@ -167,6 +180,48 @@ export default function Evaluate({ me }: { me: Me }) {
   /** A stored record past draft is append-only; the database refuses writes. */
   const frozen = !!ref && !isEditable(status);
 
+  /**
+   * What the banner says under the verdict.
+   *
+   * "Not yet recorded: ..." is true but it is not, on its own, useful: it
+   * names a problem without saying where to solve it. Two of the four tests
+   * it can name are enterable further down this page; the other two have no
+   * capture screen anywhere yet, so naming them without that qualification
+   * sends a technician hunting for a form that does not exist. And on the
+   * unsaved scratch view nothing can be recorded at all, which makes the
+   * whole list noise.
+   */
+  const detail = useMemo(() => {
+    if (!specOk) return "The declared specification does not satisfy the standard.";
+
+    if (full.failing.length > 0) {
+      return `Failing: ${full.failing.map((k) => TEST_TITLES[k] ?? k).join(", ")}.`;
+    }
+
+    if (!ref) {
+      return "Scratch view — nothing here is saved. Open a record from the " +
+             "Repository to record observations against it.";
+    }
+
+    if (full.pending.length === 0) {
+      return "All five tests recorded and within permissible error.";
+    }
+
+    const name = (k: string) => TEST_TITLES[k] ?? k;
+    const here = full.pending.filter((k) => CAPTURABLE.has(k)).map(name);
+    const elsewhere = full.pending.filter((k) => !CAPTURABLE.has(k)).map(name);
+
+    const parts: string[] = [];
+    if (here.length) parts.push(`Enter below: ${here.join(", ")}.`);
+    if (elsewhere.length) {
+      parts.push(
+        `${elsewhere.join(", ")} ${elsewhere.length === 1 ? "has" : "have"} ` +
+        "no entry screen yet — computed and printed from recorded data only."
+      );
+    }
+    return parts.join(" ");
+  }, [specOk, full, ref]);
+
   function edit(i: number, field: "indText" | "dlText", value: string) {
     setRows((prev) => {
       const next = [...prev];
@@ -280,17 +335,7 @@ export default function Evaluate({ me }: { me: Me }) {
             {overall === "PASS" ? "CONFORMS"
               : overall === "FAIL" ? "DOES NOT CONFORM" : "IN PROGRESS"}
           </div>
-          <div className="d">
-            {!specOk
-              ? "The declared specification does not satisfy the standard."
-              : full.failing.length > 0
-                ? `Failing: ${full.failing.map((k) => TEST_TITLES[k] ?? k).join(", ")}.`
-                : full.pending.length > 0
-                  ? `Not yet recorded: ${full.pending
-                      .map((k) => TEST_TITLES[k] ?? k)
-                      .join(", ")}.`
-                  : `All five tests recorded and within permissible error.`}
-          </div>
+          <div className="d">{detail}</div>
         </div>
 
         <div className="panel">
