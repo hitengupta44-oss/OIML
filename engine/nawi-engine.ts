@@ -342,3 +342,45 @@ export function checkDisturbance(
     clause: "B.3",
   };
 }
+
+// ---------------------------------------------------------------------------
+// units
+// ---------------------------------------------------------------------------
+
+/**
+ * Which unit an instrument's readings are entered and displayed in.
+ *
+ * The engine stores grams everywhere. A screen does not: an instrument whose
+ * verification scale interval is a gram or more is worked in kilograms,
+ * because that is how its own display reads, and asking a technician to
+ * convert in their head is asking for the error this pair of functions
+ * exists to prevent.
+ *
+ * These live here, rather than in a component, because a unit boundary
+ * crossed in two places will eventually be crossed inconsistently. It was:
+ * the zero-error field converted and the indication field did not, so on a
+ * kilogram instrument a reading of 21 kg was stored as 21 grams and came back
+ * PASS on an error wrong by a factor of a thousand — plausible-looking and
+ * completely wrong, which is the worst combination a verdict can have.
+ */
+export function displayUnit(i: Instrument): "kg" | "g" {
+  return i.eG >= 1 ? "kg" : "g";
+}
+
+/** Text from an input, in the display unit, to grams. Blank or junk is null. */
+export function toGrams(i: Instrument, text: string): number | null {
+  if (text === null || text === undefined || String(text).trim() === "") return null;
+  const v = Number(text);
+  if (!Number.isFinite(v)) return null;
+  return displayUnit(i) === "kg" ? v * 1000 : v;
+}
+
+/** Grams to text in the display unit, for putting stored values into inputs. */
+export function fromGrams(i: Instrument, g: number | null | undefined): string {
+  if (g === null || g === undefined) return "";
+  const n = Number(g);
+  if (!Number.isFinite(n)) return "";
+  const v = displayUnit(i) === "kg" ? n / 1000 : n;
+  // Trim binary-float dust (0.1 + 0.2 style) without losing e/10 resolution.
+  return String(Number(v.toFixed(6)));
+}
