@@ -22,6 +22,21 @@ Two approaches were tried and rejected:
 So the template carries a plain [[TABLE:x]] marker and this module swaps
 that paragraph for a real table after the Jinja pass. Deterministic, and
 the column definitions stay next to the data they format.
+
+Page breaks
+-----------
+A test report is read as evidence, so a table may not be cut in a way that
+changes what it appears to say. Three rules, applied to every table built
+here:
+
+  * cantSplit on every row -- a row never straddles a page boundary;
+  * tblHeader on row 0 -- a table continuing overleaf reprints its column
+    names, so a reviewer can still tell which column carries the verdict;
+  * tables of KEEP_TOGETHER_ROWS rows or fewer move to the next page whole
+    rather than breaking, which is what keeps the five-row summary of type
+    evaluation intact.
+
+Long tables still break, because a fifty-row weighing table has to.
 """
 
 import json
@@ -51,6 +66,9 @@ SLATE = RGBColor(0x5B, 0x6E, 0x7A)
 FAIL_RED = RGBColor(0xB3, 0x32, 0x1C)
 PASS_GREEN = RGBColor(0x0F, 0x6B, 0x4F)
 MARKER = re.compile(r"\[\[TABLE:(\w+)\]\]")
+
+# Tables at or under this many rows (header included) are held on one page.
+KEEP_TOGETHER_ROWS = 9
 
 TEST_TITLES = {
     "weighing_performance": ("Weighing performance", "A.4.4.1, A.4.4.3"),
@@ -191,6 +209,36 @@ def _shade(cell, fill: str):
     cell._tc.get_or_add_tcPr().append(el)
 
 
+def _cant_split(row):
+    """Forbid Word/LibreOffice from breaking this row across a page.
+
+    Without this a row whose cells wrap to two lines can be sliced at the
+    page boundary, leaving a stripe of table on the next page with one word
+    in it -- which is what put a lone "disturbances" fragment on page 2.
+    """
+    pr = row._tr.get_or_add_trPr()
+    el = OxmlElement("w:cantSplit")
+    el.set(qn("w:val"), "true")
+    pr.append(el)
+
+
+def _repeat_header(row):
+    """Mark the row as a header, so it reprints at the top of every page.
+
+    A continuation table with no column names is unreadable, and a reviewer
+    cannot tell which column carries the verdict.
+    """
+    pr = row._tr.get_or_add_trPr()
+    el = OxmlElement("w:tblHeader")
+    el.set(qn("w:val"), "true")
+    pr.append(el)
+
+
+def _keep_with_next(paragraph):
+    """Stop a heading or a header row being orphaned at the foot of a page."""
+    paragraph.paragraph_format.keep_with_next = True
+
+
 def _build_table(doc, spec: Dict[str, Any]):
     columns = spec["columns"]
     widths = spec.get("widths")
@@ -202,11 +250,16 @@ def _build_table(doc, spec: Dict[str, Any]):
     if widths:
         t.autofit = False
 
+    header = t.rows[0]
+    _repeat_header(header)
+    _cant_split(header)
+
     for k, name in enumerate(columns):
-        c = t.rows[0].cells[k]
+        c = header.cells[k]
         _shade(c, "EDF1F2")
         p = c.paragraphs[0]
         p.paragraph_format.space_after = Pt(1)
+        _keep_with_next(p)
         run = p.add_run(str(name))
         run.font.size = Pt(8)
         run.font.bold = True
@@ -215,7 +268,9 @@ def _build_table(doc, spec: Dict[str, Any]):
             c.width = Cm(widths[k])
 
     if not spec["rows"]:
-        cells = t.add_row().cells
+        empty = t.add_row()
+        _cant_split(empty)
+        cells = empty.cells
         cells[0].merge(cells[-1])
         r = cells[0].paragraphs[0].add_run("Not recorded.")
         r.font.size = Pt(9)
@@ -223,7 +278,9 @@ def _build_table(doc, spec: Dict[str, Any]):
         return t
 
     for row in spec["rows"]:
-        cells = t.add_row().cells
+        tr = t.add_row()
+        _cant_split(tr)
+        cells = tr.cells
         for k, value in enumerate(row):
             p = cells[k].paragraphs[0]
             p.paragraph_format.space_after = Pt(1)
@@ -237,6 +294,18 @@ def _build_table(doc, spec: Dict[str, Any]):
                     run.font.color.rgb = PASS_GREEN
             if widths:
                 cells[k].width = Cm(widths[k])
+
+    # A short table has no business being split at all. Chaining keep-with-next
+    # down every row but the last makes the whole table move to the next page
+    # as a unit, which is why the five-row summary now arrives intact instead
+    # of leaving its last row stranded overleaf. Long tables -- weighing can
+    # run to forty rows -- must still break, so they are left alone: cantSplit
+    # and the repeating header handle those.
+    if len(t.rows) <= KEEP_TOGETHER_ROWS:
+        for tr in t.rows[:-1]:
+            for cell in tr.cells:
+                for p in cell.paragraphs:
+                    _keep_with_next(p)
     return t
 
 
@@ -259,6 +328,14 @@ def replace_markers(path: str, specs: Dict[str, Dict[str, Any]]) -> int:
             # leave the marker visible rather than dropping data silently
             continue
         table = _build_table(doc, spec)
+        # A section heading sitting alone at the foot of a page with its table
+        # overleaf reads as an empty section. Bind the two.
+        prev = paragraph._p.getprevious()
+        if prev is not None and prev.tag == qn("w:p"):
+            for para in doc.paragraphs:
+                if para._p is prev:
+                    _keep_with_next(para)
+                    break
         # python-docx appends at the end of the body; move it into position,
         # then drop the marker paragraph.
         paragraph._p.addprevious(table._tbl)
