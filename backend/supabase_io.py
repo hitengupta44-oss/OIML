@@ -66,6 +66,15 @@ def _request(method: str, path: str, body=None, headers=None, raw=False):
 
 
 def _select(table: str, query: str) -> List[Dict[str, Any]]:
+    """Run a PostgREST GET.
+
+    The query is stripped of all whitespace first. PostgREST select lists
+    never contain spaces, and urllib refuses a URL that does -- so a
+    multi-line Python string with indentation produces
+    "URL can't contain control characters" rather than anything useful.
+    Doing it here means a future edit cannot reintroduce the bug.
+    """
+    query = "".join(query.split())
     return _request("GET", f"/rest/v1/{table}?{query}") or []
 
 
@@ -90,10 +99,10 @@ def fetch_evaluation(ref_or_id: str, caller: Caller) -> Dict[str, Any]:
         "is_synthetic,lab_id,model_id,"
         "lab:lab_id(code,name,state,mark_code),"
         "model:model_id("
-        "  model,instrument_type,accuracy_class,max_capacity_g,e_g,d_g,"
-        "  min_capacity_g,n,indication_type,is_electronic,has_tare_device,"
-        "  has_aux_device,is_grading,temp_low_c,temp_high_c,software_version,"
-        "  software_checksum,manufacturer:manufacturer_id(name,city,state))"
+        "model,instrument_type,accuracy_class,max_capacity_g,e_g,d_g,"
+        "min_capacity_g,n,indication_type,is_electronic,has_tare_device,"
+        "has_aux_device,is_grading,temp_low_c,temp_high_c,software_version,"
+        "software_checksum,manufacturer:manufacturer_id(name,city,state))"
         "&limit=1",
     )
     if not rows:
