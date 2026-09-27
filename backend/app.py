@@ -126,7 +126,8 @@ def health():
         "libreoffice": bool(rnd._soffice()),
         "template": os.path.exists(rnd.TEMPLATE),
         "supabase_configured": db.configured(),
-        "jwt_configured": bool(auth.JWT_SECRET),
+        "jwt_configured": auth.configured() != "none",
+        "jwt_modes": auth.configured(),
     }
 
 
