@@ -34,7 +34,7 @@
 import { useMemo, useState } from "react";
 import {
   evaluateObservations, checkRepeatability, mpeForLoad, suggestTestLoads,
-  displayUnit, toGrams, type Instrument,
+  displayUnit, toGrams, formatMass, formatError, type Instrument,
 } from "@engine/nawi-engine";
 
 export interface CaptureRow {
@@ -86,11 +86,12 @@ export default function TestCapture({
 
   const unit = displayUnit(inst);
   const kg = unit === "kg";
-  // EvaluatedObservation.pending is a plain boolean rather than a literal
-  // discriminant, so TypeScript cannot narrow Ec to a number from it. The
-  // formatter takes the undefined instead of the call site pretending.
-  const show = (g: number | undefined) =>
-    g === undefined ? "\u2014" : `${(kg ? g / 1000 : g).toFixed(kg ? 3 : 2)} ${unit}`;
+  // Loads at the instrument's own resolution, derived errors at e/10 -- the
+  // same split the weighing table and the rendered report use. This panel
+  // previously carried its own three-decimal formatter, so the two tables on
+  // one page disagreed about how precisely an error was worth stating.
+  const show = (g: number | undefined) => formatMass(inst, g);
+  const showErr = (g: number | undefined) => formatError(inst, g);
   const toG = (t: string) => toGrams(inst, t);
 
   const eccLoad: number = inst.maxCapacityG / 3;
@@ -191,7 +192,7 @@ export default function TestCapture({
             <p className="note">
               Apply <strong>{show(eccLoad)}</strong> — one third of Max — at the
               centre and at each quarter segment. Each indication must stay
-              within <strong>± {show(mpeForLoad(inst, eccLoad))}</strong> of the
+              within <strong>± {showErr(mpeForLoad(inst, eccLoad))}</strong> of the
               applied load.
             </p>
           </div>
@@ -228,7 +229,7 @@ export default function TestCapture({
                           }
                         />
                       </td>
-                      <td className="n">{waiting ? "—" : show(r.Ec)}</td>
+                      <td className="n">{waiting ? "—" : showErr(r.Ec)}</td>
                       <td>
                         <span className={`tag ${waiting ? "PENDING" : r.verdict}`}>
                           {waiting ? "—" : r.verdict}
@@ -247,7 +248,7 @@ export default function TestCapture({
             <p className="note">
               Weigh <strong>{show(repLoad)}</strong> three times, removing the
               load and re-zeroing between weighings. The spread must not exceed{" "}
-              <strong>{show(mpeForLoad(inst, repLoad))}</strong>, the absolute
+              <strong>{showErr(mpeForLoad(inst, repLoad))}</strong>, the absolute
               value of the mpe for that load.
             </p>
           </div>
@@ -270,8 +271,8 @@ export default function TestCapture({
               <div className={`verdict ${repResult.verdict}`} style={{ marginTop: 4 }}>
                 <div className="big">{repResult.verdict}</div>
                 <div className="d">
-                  Spread {show(repResult.spread)} ({repResult.spreadE.toFixed(2)} e)
-                  against a limit of {show(repResult.limit)}.
+                  Spread {showErr(repResult.spread)} ({repResult.spreadE.toFixed(2)} e)
+                  against a limit of {showErr(repResult.limit)}.
                 </div>
               </div>
             )}
