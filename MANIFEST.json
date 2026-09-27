@@ -1,8 +1,8 @@
 {
   "project": "PS 26035 \u2014 NAWI type-evaluation test report system",
   "generated": "2026-09-27",
-  "file_count": 102,
-  "total_bytes": 11420646,
+  "file_count": 103,
+  "total_bytes": 11453434,
   "excluded": [
     ".git",
     ".vercel",
@@ -20,13 +20,13 @@
     },
     {
       "path": "FILES.md",
-      "bytes": 8472,
-      "sha256_16": "d3409904b670af81"
+      "bytes": 8551,
+      "sha256_16": "d94cdce3d8c6bf81"
     },
     {
       "path": "MANIFEST.json",
-      "bytes": 9828,
-      "sha256_16": "1dd57dbf05bbd693"
+      "bytes": 12693,
+      "sha256_16": "2e3f84df0b0e39f4"
     },
     {
       "path": "README.md",
@@ -86,7 +86,7 @@
     {
       "path": "backend/templates/r76-2.docx",
       "bytes": 40129,
-      "sha256_16": "1000cb5ebbe2bdf7"
+      "sha256_16": "65c8a17ecb33ec6c"
     },
     {
       "path": "backend/test_local.py",
@@ -105,8 +105,8 @@
     },
     {
       "path": "engine/nawi-engine.ts",
-      "bytes": 11805,
-      "sha256_16": "347ae0ea47c3d62d"
+      "bytes": 18257,
+      "sha256_16": "81e6c2d538477f2d"
     },
     {
       "path": "engine/nawi-recompute.ts",
@@ -120,8 +120,8 @@
     },
     {
       "path": "engine/parity_runner.ts",
-      "bytes": 1441,
-      "sha256_16": "10689e272af9a2ea"
+      "bytes": 5130,
+      "sha256_16": "d8c76893c69dba81"
     },
     {
       "path": "engine/test_harness.py",
@@ -135,8 +135,8 @@
     },
     {
       "path": "engine/test_parity.py",
-      "bytes": 10622,
-      "sha256_16": "9f29d5697085c9dd"
+      "bytes": 11577,
+      "sha256_16": "4ecc4d7f20780de6"
     },
     {
       "path": "extracted/IN_7th_schedule_A_NAWI.txt",
@@ -235,8 +235,8 @@
     },
     {
       "path": "frontend/README.md",
-      "bytes": 4662,
-      "sha256_16": "d03b98ce04d15ed1"
+      "bytes": 5198,
+      "sha256_16": "215c13a003bc815f"
     },
     {
       "path": "frontend/index.html",
@@ -265,13 +265,13 @@
     },
     {
       "path": "frontend/src/components/StatusBar.tsx",
-      "bytes": 4683,
-      "sha256_16": "4cfbcef87d22c0db"
+      "bytes": 4693,
+      "sha256_16": "173e52acad97b3b2"
     },
     {
       "path": "frontend/src/components/TestCapture.tsx",
-      "bytes": 11154,
-      "sha256_16": "259fda7a279c154a"
+      "bytes": 11222,
+      "sha256_16": "0b754eacf7344af5"
     },
     {
       "path": "frontend/src/lib/offline.ts",
@@ -305,8 +305,8 @@
     },
     {
       "path": "frontend/src/routes/Evaluate.tsx",
-      "bytes": 26041,
-      "sha256_16": "f29cbfbd80c86eeb"
+      "bytes": 29301,
+      "sha256_16": "b7fa36559de0d687"
     },
     {
       "path": "frontend/src/routes/Repository.tsx",
@@ -315,8 +315,8 @@
     },
     {
       "path": "frontend/src/styles.css",
-      "bytes": 7263,
-      "sha256_16": "55b5fa5d26facc5c"
+      "bytes": 7427,
+      "sha256_16": "ee70d085df340247"
     },
     {
       "path": "frontend/src/vite-env.d.ts",
@@ -357,6 +357,11 @@
       "path": "scripts/preflight.py",
       "bytes": 8156,
       "sha256_16": "ecbb2d7f8b72aa1f"
+    },
+    {
+      "path": "scripts/role_matrix_test.py",
+      "bytes": 14710,
+      "sha256_16": "63bb56fe33a1d4f9"
     },
     {
       "path": "scripts/slice_indian_schedule.py",
