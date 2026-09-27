@@ -34,7 +34,7 @@
 import { useMemo, useState } from "react";
 import {
   evaluateObservations, checkRepeatability, mpeForLoad, suggestTestLoads,
-  type Instrument,
+  displayUnit, toGrams, type Instrument,
 } from "@engine/nawi-engine";
 
 export interface CaptureRow {
@@ -84,17 +84,14 @@ export default function TestCapture({
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
 
-  const kg = inst.eG >= 1;
-  const unit = kg ? "kg" : "g";
+  const unit = displayUnit(inst);
+  const kg = unit === "kg";
   // EvaluatedObservation.pending is a plain boolean rather than a literal
   // discriminant, so TypeScript cannot narrow Ec to a number from it. The
   // formatter takes the undefined instead of the call site pretending.
   const show = (g: number | undefined) =>
     g === undefined ? "\u2014" : `${(kg ? g / 1000 : g).toFixed(kg ? 3 : 2)} ${unit}`;
-  const toG = (t: string) => {
-    const v = parseFloat(t);
-    return Number.isFinite(v) ? (kg ? v * 1000 : v) : null;
-  };
+  const toG = (t: string) => toGrams(inst, t);
 
   const eccLoad: number = inst.maxCapacityG / 3;
   const repLoad: number = repeatabilityLoad(inst) ?? (2 / 3) * inst.maxCapacityG;
