@@ -384,3 +384,109 @@ export function fromGrams(i: Instrument, g: number | null | undefined): string {
   // Trim binary-float dust (0.1 + 0.2 style) without losing e/10 resolution.
   return String(Number(v.toFixed(6)));
 }
+
+/**
+ * Format a mass at the instrument's own resolution.
+ *
+ * The TypeScript twin of make_formatter() in backend/render.py, so a number
+ * on screen and the same number in the rendered report are written the same
+ * way. `resolution` is a fraction of e.
+ */
+export function formatMass(
+  i: Instrument, g: number | null | undefined, resolution = 1
+): string {
+  if (g === null || g === undefined || !Number.isFinite(Number(g))) return "—";
+  const kg = displayUnit(i) === "kg";
+  const step = kg ? (i.eG * resolution) / 1000 : i.eG * resolution;
+
+  let places = 0;
+  let x = step;
+  while (Math.abs(x - Math.round(x)) > 1e-9 && places < 6) { x *= 10; places += 1; }
+
+  let v = (kg ? Number(g) / 1000 : Number(g));
+  // Never print "-0.00": a value that rounds to zero is zero.
+  if (Math.abs(v) < 0.5 * Math.pow(10, -places)) v = 0;
+  return `${halfEven(v, places)} ${kg ? "kg" : "g"}`;
+}
+
+/**
+ * toFixed, but rounding exact ties to even, as Python's format() does.
+ *
+ * The two languages disagree out of the box: JavaScript rounds a half away
+ * from zero, so (-2.5).toFixed(0) is "-3" where Python gives "-2". That put a
+ * different number on the screen and in the signed report for one reading --
+ * caught by the formatter cross-check in parity_runner.ts.
+ *
+ * Python's behaviour wins, for two reasons: the PDF is the document of
+ * record, and rounding halves to even is the convention ISO 80000-1 gives for
+ * measurement, precisely so a long column of errors is not biased upward by
+ * its ties.
+ *
+ * The rounding is done on the decimal expansion rather than by scaling. A
+ * first attempt multiplied by a power of ten and tested for .5, which
+ * manufactures ties that do not exist: 0.005 * 100 lands on exactly 0.5, but
+ * the double nearest 0.005 is a shade ABOVE 0.005, so Python rounds it up to
+ * 0.01 and is right to. Only a value that is a tie in its own expansion --
+ * -2.5, 0.125 -- is a tie.
+ */
+function halfEven(v: number, places: number): string {
+  if (!Number.isFinite(v)) return String(v);
+  const negative = v < 0;
+  const a = Math.abs(v);
+
+  // The full 20 decimals JavaScript will give. Fewer is not enough: asking
+  // for 17 renders 0.005 as "0.00500000000000000", which looks like an exact
+  // tie, when the double is really 0.005000000000000000104 and rounds up.
+  const expansion = a.toFixed(20);
+  const dot = expansion.indexOf(".");
+  const whole = expansion.slice(0, dot);
+  const frac = expansion.slice(dot + 1);
+
+  let kept = whole + frac.slice(0, places);
+  const dropped = frac.slice(places);
+  const first = dropped.charCodeAt(0) - 48;
+
+  let roundUp: boolean;
+  if (first > 5) {
+    roundUp = true;
+  } else if (first < 5) {
+    roundUp = false;
+  } else if (/[1-9]/.test(dropped.slice(1))) {
+    roundUp = true;                       // strictly above the halfway point
+  } else {
+    roundUp = (kept.charCodeAt(kept.length - 1) - 48) % 2 === 1;   // the tie
+  }
+  if (roundUp) kept = (BigInt(kept) + 1n).toString();
+
+  kept = kept.padStart(places + 1, "0");
+  const whole2 = kept.slice(0, kept.length - places);
+  const frac2 = kept.slice(kept.length - places);
+  // Group the integer part in threes, as Python's "{:,.Nf}" does. A weighbridge
+  // reads in tonnes but a bench scale reports grams, so five- and six-figure
+  // values are routine and an ungrouped 20982.8 is harder to read at a glance
+  // than 20,982.8 -- and, more to the point, the report already groups them.
+  const grouped = whole2.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const out = places === 0 ? grouped : `${grouped}.${frac2}`;
+
+  // Never emit "-0", or "-0.00".
+  return negative && /[1-9]/.test(out) ? `-${out}` : out;
+}
+
+
+/**
+ * Format an error, which is not an indication and must not be rounded to e.
+ *
+ * Ec, the mpe and every deviation are derived: A.4.4.3 adds half a scale
+ * interval and subtracts an additional load built from e/10 weights, so an
+ * error legitimately carries finer resolution than the instrument's display.
+ * Rounding it to e destroys the quantity the verdict turns on. On a scale with
+ * e = 0.01 kg it printed a true error of -0.002 kg as "-0.00 kg", and printed
+ * a row sitting exactly ON its limit (Ec = 0.005, mpe = 0.005) as "0.01 kg"
+ * against "0.01 kg" -- indistinguishable from a row with room to spare.
+ *
+ * e/10 is the right resolution because e/10 is the resolution of the weights
+ * the technician actually uses to find the changeover point.
+ */
+export function formatError(i: Instrument, g: number | null | undefined): string {
+  return formatMass(i, g, 0.1);
+}
