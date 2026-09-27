@@ -95,14 +95,18 @@ SOFFICE_CANDIDATES = ("soffice", "libreoffice",
 # formatting
 # ---------------------------------------------------------------------------
 
-def make_formatter(e_g: float):
+def make_formatter(e_g: float, resolution: float = 1.0):
     """Format a mass at the instrument's own resolution.
 
     A report printing 10.0000 kg when the instrument resolves 0.02 kg is
     claiming precision the instrument does not have.
+
+    `resolution` is a fraction of e. Indications and applied loads are printed
+    at 1.0 -- what the instrument can actually show. Errors are printed at 0.1
+    by make_error_formatter below, because an error is not an indication.
     """
     use_kg = e_g >= 1.0
-    step = e_g / 1000.0 if use_kg else e_g
+    step = (e_g * resolution) / 1000.0 if use_kg else e_g * resolution
     places, x = 0, step
     while abs(x - round(x)) > 1e-9 and places < 6:
         x *= 10
@@ -119,6 +123,23 @@ def make_formatter(e_g: float):
         return f"{v:,.{places}f} {unit}"
 
     return fmt
+
+
+def make_error_formatter(e_g: float):
+    """Format an error, which is not an indication and must not be rounded to e.
+
+    Ec, the mpe and every deviation are derived quantities: A.4.4.3 adds half a
+    scale interval and subtracts an additional load made up of e/10 weights, so
+    an error legitimately carries finer resolution than the instrument's own
+    display. Rounding it to e destroys exactly the quantity the verdict turns
+    on -- a true Ec of 50 g and one of 150 g both printed as "0.1 kg" against
+    an mpe printed as "0.1 kg", one PASS and one FAIL, so the report appeared
+    to contradict itself and a reviewer could not audit the verdict.
+
+    e/10 is the right resolution because e/10 is the resolution of the weights
+    the technician actually uses to find the changeover point.
+    """
+    return make_formatter(e_g, resolution=0.1)
 
 
 def prettify(code: Optional[str]) -> str:
@@ -144,8 +165,13 @@ def _standard_meta(standard_id: str) -> Dict[str, str]:
 # ---------------------------------------------------------------------------
 
 def table_specs(computed: Dict[str, Any], summary_rows: List[Dict[str, Any]],
-                fmt) -> Dict[str, Dict[str, Any]]:
-    """Columns, rows and widths for every table in the report."""
+                fmt, efmt) -> Dict[str, Dict[str, Any]]:
+    """Columns, rows and widths for every table in the report.
+
+    Two formatters, deliberately. `fmt` prints indications and applied loads at
+    the instrument's scale interval; `efmt` prints derived errors at e/10. See
+    make_error_formatter.
+    """
     T = computed["tests"]
 
     def spec(columns, rows, widths, verdict_col=None, keep_together=False):
@@ -169,29 +195,29 @@ def table_specs(computed: Dict[str, Any], summary_rows: List[Dict[str, Any]],
             ["No.", "Load L", "Direction", "Indication I", "\u0394L", "P",
              "Error Ec", "mpe", "Result"],
             [[k, fmt(r["load_g"]), r["direction"], fmt(r["indication_g"]),
-              fmt(r["delta_load_g"]), fmt(r["P_g"]), fmt(r["Ec_g"]),
-              "\u00b1 " + fmt(r["mpe_g"]), r["verdict"]]
+              efmt(r["delta_load_g"]), efmt(r["P_g"]), efmt(r["Ec_g"]),
+              "\u00b1 " + efmt(r["mpe_g"]), r["verdict"]]
              for k, r in enumerate(T["weighing_performance"]["rows"], 1)],
             [1.0, 2.2, 2.1, 2.2, 1.7, 2.0, 2.0, 2.0, 1.8], verdict_col=8),
 
         "repeatability": spec(
             ["Test load", "Weighings", "Spread", "Spread in e", "Limit", "Result"],
-            [[fmt(r["load_g"]), r["n_weighings"], fmt(r["spread_g"]),
-              f"{r['spread_e']:.2f} e", fmt(r["limit_g"]), r["verdict"]]
+            [[fmt(r["load_g"]), r["n_weighings"], efmt(r["spread_g"]),
+              f"{r['spread_e']:.2f} e", efmt(r["limit_g"]), r["verdict"]]
              for r in T["repeatability"]["series"]],
             [3.0, 2.2, 2.8, 2.6, 2.8, 2.0], verdict_col=5),
 
         "eccentricity": spec(
             ["Position", "Load", "Indication", "Error Ec", "mpe", "Result"],
             [[r["position"], fmt(r["load_g"]), fmt(r["indication_g"]),
-              fmt(r["Ec_g"]), "\u00b1 " + fmt(r["mpe_g"]), r["verdict"]]
+              efmt(r["Ec_g"]), "\u00b1 " + efmt(r["mpe_g"]), r["verdict"]]
              for r in T["eccentricity"]["rows"]],
             [3.2, 2.8, 2.8, 2.6, 2.6, 2.4], verdict_col=5),
 
         "creep": spec(
             ["Elapsed", "Indication", "Deviation", "Deviation in e"],
             [[f"{r['elapsed_minutes']} min", fmt(r["indication_g"]),
-              fmt(r["deviation_g"]), f"{r['deviation_e']:.2f} e"]
+              efmt(r["deviation_g"]), f"{r['deviation_e']:.2f} e"]
              for r in T["time_dependence"]["rows"]],
             [3.4, 4.0, 4.0, 4.0]),
 
@@ -199,8 +225,8 @@ def table_specs(computed: Dict[str, Any], summary_rows: List[Dict[str, Any]],
             ["Disturbance", "Without", "With", "Difference", "Limit",
              "Fault detected", "Result"],
             [[prettify(r["disturbance"]), fmt(r["indication_without_g"]),
-              fmt(r["indication_with_g"]), fmt(r["difference_g"]),
-              fmt(r["limit_g"]),
+              fmt(r["indication_with_g"]), efmt(r["difference_g"]),
+              efmt(r["limit_g"]),
               "yes" if r["significant_fault_detected"] else "no", r["verdict"]]
              for r in T["electrical_disturbances"]["rows"]],
             [3.6, 2.2, 2.2, 2.2, 2.0, 2.2, 1.8], verdict_col=6),
@@ -389,6 +415,7 @@ def build_context(ev: Dict[str, Any], computed: Dict[str, Any],
                   payload_sha256: str) -> Dict[str, Any]:
     inst = dict(ev["instrument"])
     fmt = make_formatter(float(inst["e_g"]))
+    efmt = make_error_formatter(float(inst["e_g"]))
     meta = _standard_meta(ev.get("standard_id", ""))
 
     summary_rows = []
@@ -461,6 +488,7 @@ def build_context(ev: Dict[str, Any], computed: Dict[str, Any],
         "verified_by": ev.get("verified_by"),
         "approved_by": ev.get("approved_by"),
         "fmt": fmt,
+        "efmt": efmt,
     }
 
 
@@ -480,7 +508,7 @@ def render_docx(ev: Dict[str, Any], computed: Dict[str, Any],
     tpl.render(ctx)
     tpl.save(out_path)
 
-    specs = table_specs(computed, ctx["summary_rows"], ctx["fmt"])
+    specs = table_specs(computed, ctx["summary_rows"], ctx["fmt"], ctx["efmt"])
     replaced = replace_markers(out_path, specs)
     if replaced != len(specs):
         raise RuntimeError(
